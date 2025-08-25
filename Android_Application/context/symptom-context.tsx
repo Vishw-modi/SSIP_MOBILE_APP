@@ -27,10 +27,10 @@ export type Demographics = {
 };
 
 export type Lifestyle = {
-  exerciseFrequency: string | null;
-  sleepQuality: string | null;
+  exerciseFrequency?: string;
+  sleepQuality?: string;
   stress: number; // 0-100
-  diet: string | null;
+  diet?: string;
   recentChanges: string;
 };
 

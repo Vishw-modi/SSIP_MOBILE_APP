@@ -327,7 +327,7 @@ export default function ChatBotScreen() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.select({
         ios: insets.top + 8,
-        android: insets.bottom + 30,
+        android: insets.bottom + 20,
         default: 0,
       })}
     >

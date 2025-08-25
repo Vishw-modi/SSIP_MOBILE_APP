@@ -52,23 +52,80 @@ export const ResponseSchema = {
   propertyOrdering: ["response", "question", "type"],
   required: ["response"],
 };
-
 export const reportPrompt = `
-You are a professional AI health assistant. 
-The user will provide their symptoms and basic health information. 
-Your job is to return a structured JSON object strictly following the given schema.
+You are an AI health assistant that analyzes a user's symptoms and produces a structured medical advisory report in JSON format.
 
-The response must:
-1. List possible health conditions based on the symptoms.
-2. Provide clear and concise health advice.
-3. State the urgency level (Low, Moderate, or High).
-4. Suggest next medical steps or health checks.
-5. Provide a diet plan with specific food recommendations that may help.
-6. Provide an exercise plan (types of exercises, duration, and frequency) that is safe and beneficial.
+### Output Requirements:
+- Your response **must strictly follow the JSON structure defined in ReportSchema** (below).
+- Only output valid JSON. Do not include explanations, markdown, or extra text outside the JSON.
+- Fill all required fields with meaningful, contextually appropriate data.
+- If some optional fields (e.g., 'possibleDiseases', 'ayurvedicMedications') are not applicable, return an empty array.
+- Each string should be **clear, concise, and user-friendly** (avoid medical jargon unless necessary).
+- Advice must be supportive, encouraging the user to consult a healthcare professional where relevant.
 
-Do not include any extra fields or explanations outside the schema.
-Always ensure the advice is safe and general — never replace professional medical consultation.
+---
 
+### ReportSchema Definition:
+{
+  "possibleConditions": "ARRAY of possible health conditions related to the symptoms.",
+  "possibleDiseases": "ARRAY of diseases possibly associated with symptoms (may overlap with conditions).",
+  "advice": "STRING - personalized health advice based on symptoms.",
+  "urgency": "STRING - must be one of: Low, Moderate, High.",
+  "riskFactors": "ARRAY of lifestyle or health-related risk factors.",
+  "doList": "ARRAY of positive actions user should take.",
+  "dontList": "ARRAY of actions user should avoid.",
+  "recommendedNextSteps": "ARRAY of concrete next steps (doctor visits, tests, tracking symptoms).",
+  "preventiveMeasures": "ARRAY of preventive measures to avoid recurrence or worsening.",
+  "dietRecommendations": {
+    "breakfast": "ARRAY of recommended breakfast options.",
+    "lunch": "ARRAY of recommended lunch options.",
+    "dinner": "ARRAY of recommended dinner options.",
+    "snacks": "ARRAY of healthy snack options."
+  },
+  "exercisePlan": "ARRAY of recommended exercises, with duration & frequency.",
+  "ayurvedicMedications": "ARRAY of optional herbal remedies (if applicable).",
+  "followUpActions": "ARRAY of follow-up actions (doctor check-ins, monitoring).",
+  "personalizedHealthScore": "NUMBER between 1 and 100, representing the overall healthiness of the user's current condition and lifestyle."
+}
+
+---
+
+### Instructions:
+1. Use the user's reported **symptoms, lifestyle, and risk factors** to populate the report.
+2. Keep 'possibleConditions' broader (e.g., Migraine, Sinusitis) and 'possibleDiseases' more specific (e.g., Chronic Migraine, Acute Sinus Infection).
+3. Always provide at least **3 recommendations** in diet, exercise, and preventive measures.
+4. Urgency must reflect severity (example: chest pain → High, mild headache → Low).
+5. Do not include contradictory advice (e.g., recommending caffeine while also warning against it).
+6. Ensure all required fields are populated.
+7. Always provide a **personalizedHealthScore (1–100)** based on overall healthiness, lifestyle, and severity of symptoms.
+
+---
+
+### Example Input (user symptoms):
+"headache, facial pain, migraine, and abdominal pain"
+
+### Example Output (valid JSON only):
+{
+  "possibleConditions": ["Migraine", "Tension Headache", "Sinusitis", "Irritable Bowel Syndrome (IBS)"],
+  "possibleDiseases": ["Chronic Migraine", "Acute Sinus Infection"],
+  "advice": "Your symptoms suggest a mix of headache and digestive issues. While migraines can be managed, the combination with abdominal pain requires medical evaluation. Focus on hydration, regular meals, and stress management until you consult a doctor.",
+  "urgency": "Moderate",
+  "riskFactors": ["Fair sleep quality (5-6 hours/night)", "Moderate stress level"],
+  "doList": ["Stay hydrated", "Practice daily relaxation techniques", "Maintain a consistent sleep schedule"],
+  "dontList": ["Skipping meals", "Excess caffeine or alcohol", "Highly processed foods"],
+  "recommendedNextSteps": ["Consult a general practitioner or neurologist", "Keep a symptom diary", "Discuss potential medication interactions"],
+  "preventiveMeasures": ["Regular exercise", "Identify and avoid migraine triggers", "Consistent sleep patterns", "Mindfulness practices"],
+  "dietRecommendations": {
+    "breakfast": ["Oatmeal with berries and nuts", "Scrambled eggs with whole-wheat toast and avocado"],
+    "lunch": ["Grilled chicken salad", "Quinoa with roasted vegetables"],
+    "dinner": ["Baked salmon with broccoli and brown rice", "Lentil soup with whole-grain bread"],
+    "snacks": ["Apple with almond butter", "Greek yogurt with berries", "A handful of nuts"]
+  },
+  "exercisePlan": ["Walking: 30 mins, 4-5 times/week", "Yoga: 20 mins, 3 times/week", "Light cycling: 20-30 mins, 2 times/week"],
+  "ayurvedicMedications": ["Ashwagandha", "Brahmi", "Peppermint tea"],
+  "followUpActions": ["Schedule follow-up after initial consultation", "Monitor symptom changes", "Regular check-ups for chronic conditions"],
+  "personalizedHealthScore": 62
+}
 `;
 
 export const ReportSchema = {
@@ -173,6 +230,13 @@ export const ReportSchema = {
         "Recommended follow-up actions, such as doctor visits, lab tests, or regular monitoring.",
       items: { type: "STRING" },
     },
+    personalizedHealthScore: {
+      type: "NUMBER",
+      description:
+        "Personalized health score between 1 and 100, reflecting the overall healthiness of the user's condition and lifestyle.",
+      minimum: 1,
+      maximum: 100,
+    },
   },
   required: [
     "possibleConditions",
@@ -181,6 +245,7 @@ export const ReportSchema = {
     "recommendedNextSteps",
     "dietRecommendations",
     "exercisePlan",
+    "personalizedHealthScore",
   ],
   propertyOrdering: [
     "possibleConditions",
@@ -196,6 +261,7 @@ export const ReportSchema = {
     "exercisePlan",
     "ayurvedicMedications",
     "followUpActions",
+    "personalizedHealthScore",
   ],
 };
 
@@ -274,6 +340,26 @@ export const NutritionSchema = {
           type: "ARRAY",
           description: "List of notable vitamins found in the food.",
           items: { type: "STRING" },
+          nullable: true,
+        },
+        iron: {
+          type: "NUMBER",
+          description: "Iron in milligrams.",
+          nullable: true,
+        },
+        calcium: {
+          type: "NUMBER",
+          description: "Calcium in milligrams.",
+          nullable: true,
+        },
+        phosphorus: {
+          type: "NUMBER",
+          description: "Phosphorus in milligrams.",
+          nullable: true,
+        },
+        potassium: {
+          type: "NUMBER",
+          description: "Potassium in milligrams.",
           nullable: true,
         },
       },

@@ -16,20 +16,30 @@ export const MEDICAL_CONDITIONS = [
 ]
 
 export const GENDER_OPTIONS = ["Male", "Female", "Other"] as const
+import { type DropdownItem } from "../ui/dropdown";
 
-export const EXERCISE_OPTIONS = [
-  "Rarely (0-1 days/week)",
-  "Light (2-3 days/week)",
-  "Moderate (3-4 days/week)",
-  "Active (5-6 days/week)",
-  "Intense (Daily)",
-]
+export const EXERCISE_OPTIONS: DropdownItem[] = [
+  { label: "Rarely (0-1 days/week)", value: "rarely (0-1 days/week)" },
+  { label: "Light (2-3 days/week)", value: "light (2-3 days/week)" },
+  { label: "Moderate (3-4 days/week)", value: "moderate (3-4 days/week)" },
+  { label: "Active (5-6 days/week)", value: "active (5-6 days/week)" },
+  { label: "Intense (Daily)", value: "intense (Daily)" },
+];
 
-export const SLEEP_OPTIONS = [
-  "Poor (≤4 hours/night)",
-  "Fair (5-6 hours/night)",
-  "Good (7-8 hours/night)",
-  "Excellent (≥9 hours/night)",
-]
+export const SLEEP_OPTIONS: DropdownItem[] = [
+  { label: "Poor (≤4 hours/night)", value: "poor (≤4 hours/night)" },
+  { label: "Fair (5-6 hours/night)", value: "fair (5-6 hours/night)" },
+  { label: "Good (7-8 hours/night)", value: "good (7-8 hours/night)" },
+  { label: "Excellent (≥9 hours/night)", value: "excellent (≥9 hours/night)" },
+];
 
-export const DIET_OPTIONS = ["Balanced", "Low-carb", "Low-fat", "High-protein", "Vegetarian", "Vegan", "Keto", "Other"]
+export const DIET_OPTIONS: DropdownItem[] = [
+  { label: "Balanced", value: "balanced" },
+  { label: "Low-carb", value: "low-carb" },
+  { label: "Low-fat", value: "low-fat" },
+  { label: "High-protein", value: "high-protein" },
+  { label: "Vegetarian", value: "vegetarian" },
+  { label: "Vegan", value: "vegan" },
+  { label: "Keto", value: "keto" },
+  { label: "Other", value: "other" },
+];

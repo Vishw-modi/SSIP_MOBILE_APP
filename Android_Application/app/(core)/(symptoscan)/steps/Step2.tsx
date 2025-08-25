@@ -9,6 +9,7 @@ import {
 import { useRouter } from "expo-router";
 import { MotiView } from "moti";
 import { Easing } from "react-native-reanimated";
+import Toast from "react-native-toast-message";
 import { useSymptoms } from "../../../../context/symptom-context";
 import { GENDER_OPTIONS, MEDICAL_CONDITIONS } from "./data/options";
 import { palette } from "@/design/tokens";
@@ -18,6 +19,37 @@ const Step2 = () => {
   const { demographics, updateDemographics, toggleCondition } = useSymptoms();
 
   const selectedCount = demographics.conditions.length;
+
+  const validateRequiredFields = () => {
+    const errors = [];
+
+    if (!demographics.age || demographics.age.trim() === "") {
+      errors.push("Age is required");
+    }
+
+    if (!demographics.gender || demographics.gender.trim() === "") {
+      errors.push("Gender is required");
+    }
+
+    return errors;
+  };
+
+  const handleNext = () => {
+    const errors = validateRequiredFields();
+
+    if (errors.length > 0) {
+      Toast.show({
+        type: "error",
+        text1: "Required Fields Missing",
+        text2: errors.join(", "),
+        position: "bottom",
+        visibilityTime: 3000,
+      });
+      return;
+    }
+
+    router.push("/(core)/(symptoscan)/steps/Step3");
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -46,7 +78,9 @@ const Step2 = () => {
 
         <View style={styles.grid2}>
           <View style={{ flex: 1 }}>
-            <Text style={styles.label}>Age</Text>
+            <Text style={styles.label}>
+              Age <Text style={styles.required}>*</Text>
+            </Text>
             <TextInput
               value={demographics.age}
               onChangeText={(t) =>
@@ -55,11 +89,17 @@ const Step2 = () => {
               keyboardType="numeric"
               placeholder="Enter your age"
               placeholderTextColor="#9CA3AF"
-              style={styles.input}
+              style={[
+                styles.input,
+                (!demographics.age || demographics.age.trim() === "") &&
+                  styles.inputError,
+              ]}
             />
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={styles.label}>Gender</Text>
+            <Text style={styles.label}>
+              Gender <Text style={styles.required}>*</Text>
+            </Text>
             <View style={styles.rowWrap}>
               {GENDER_OPTIONS.map((g) => {
                 const active = demographics.gender === g;
@@ -82,6 +122,9 @@ const Step2 = () => {
                 );
               })}
             </View>
+            {(!demographics.gender || demographics.gender.trim() === "") && (
+              <Text style={styles.errorText}>Please select a gender</Text>
+            )}
           </View>
         </View>
 
@@ -200,7 +243,7 @@ const Step2 = () => {
             <Text style={styles.btnGhostText}>← Back</Text>
           </Pressable>
           <Pressable
-            onPress={() => router.push("/(core)/(symptoscan)/steps/Step3")}
+            onPress={handleNext}
             style={({ pressed }) => [
               styles.btnPrimary,
               pressed && { opacity: 0.9 },
@@ -210,6 +253,8 @@ const Step2 = () => {
           </Pressable>
         </View>
       </MotiView>
+
+      <Toast />
     </ScrollView>
   );
 };
@@ -239,6 +284,7 @@ const styles = StyleSheet.create({
   progressText: { marginTop: 6, fontSize: 12, color: "#111827" },
   grid2: { flexDirection: "row", gap: 16, marginTop: 8 },
   label: { color: "#0F172A", fontWeight: "700", marginBottom: 6 },
+  required: { color: "#EF4444", fontWeight: "700" },
   input: {
     borderWidth: 1,
     borderColor: "#E5E7EB",
@@ -247,6 +293,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     backgroundColor: "#FFFFFF",
     color: "#111827",
+  },
+  inputError: {
+    borderColor: "#EF4444",
+    backgroundColor: "#FEF2F2",
+  },
+  errorText: {
+    color: "#EF4444",
+    fontSize: 12,
+    marginTop: 4,
+    fontWeight: "500",
   },
   textarea: { minHeight: 96, textAlignVertical: "top" },
   rowWrap: { flexDirection: "row", flexWrap: "wrap", gap: 8 },

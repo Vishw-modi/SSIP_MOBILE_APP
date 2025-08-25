@@ -67,7 +67,7 @@ app.post("/chat", async (req, res) => {
       },
     });
 
-    console.log("lastUserMessage:", lastUserMessage);
+    // console.log("lastUserMessage:", lastUserMessage);
 
     const result = await chat.sendMessage(
       String(lastUserMessage.response || "").trim()
@@ -76,10 +76,11 @@ app.post("/chat", async (req, res) => {
     // console.log("result:", result.response);
 
     const replyText = await result.response.text();
-    console.log("Raw AI reply:", replyText);
+    // console.log("Raw AI reply:", replyText);
 
     const replyJson = JSON.parse(replyText);
-    console.log("replyJson:", replyJson);
+    // console.log("replyJson:", replyJson);
+    console.log("Response message send for the chat");
 
     res.json({ reply: replyJson });
   } catch (error) {

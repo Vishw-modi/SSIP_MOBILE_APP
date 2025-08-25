@@ -15,7 +15,9 @@ export class RestAdapter implements ChatAdapter {
       throw new Error(res.statusText)
     }
     const data = (await res.json())
-    console.log("data-reply", data?.reply);
+    // console.log("data-reply", data?.reply);
+    console.log("Reply recieved");
+    
     
     return data?.reply as chatReply ?? ""
   }
