@@ -5,7 +5,7 @@ export class RestAdapter implements ChatAdapter {
   constructor(private baseUrl: string = BACKEND_URL) {}
 
   async send(messages: ChatMessage[]): Promise<chatReply> {
-    const res = await fetch(`${this.baseUrl}/chat`, {
+    const res = await fetch(`${this.baseUrl}/api/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ messages }),

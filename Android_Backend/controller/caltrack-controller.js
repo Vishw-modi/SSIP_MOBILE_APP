@@ -39,7 +39,7 @@ export const generateCaltrack = async (req, res) => {
       ],
       generationConfig: {
         maxOutputTokens: 2048,
-        temperature: 0.2,
+        temperature: 0.1,
         responseMimeType: "application/json",
         responseSchema: NutritionSchema,
       },

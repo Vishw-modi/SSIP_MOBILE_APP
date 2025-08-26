@@ -56,10 +56,10 @@ export const reportPrompt = `
 You are an AI health assistant that analyzes a user's symptoms and produces a structured medical advisory report in JSON format.
 
 ### Output Requirements:
-- Your response **must strictly follow the JSON structure defined in ReportSchema** (below).
+- Your response **must strictly follow the JSON structure defined in ReportSchema** below.
 - Only output valid JSON. Do not include explanations, markdown, or extra text outside the JSON.
 - Fill all required fields with meaningful, contextually appropriate data.
-- If some optional fields (e.g., 'possibleDiseases', 'ayurvedicMedications') are not applicable, return an empty array.
+- If some optional fields (e.g., 'possibleDiseases', 'ayurvedicMedications', 'reportInsights') are not applicable, return an empty array or an empty string.
 - Each string should be **clear, concise, and user-friendly** (avoid medical jargon unless necessary).
 - Advice must be supportive, encouraging the user to consult a healthcare professional where relevant.
 
@@ -85,7 +85,8 @@ You are an AI health assistant that analyzes a user's symptoms and produces a st
   "exercisePlan": "ARRAY of recommended exercises, with duration & frequency.",
   "ayurvedicMedications": "ARRAY of optional herbal remedies (if applicable).",
   "followUpActions": "ARRAY of follow-up actions (doctor check-ins, monitoring).",
-  "personalizedHealthScore": "NUMBER between 1 and 100, representing the overall healthiness of the user's current condition and lifestyle."
+  "personalizedHealthScore": "NUMBER between 1 and 100, representing the overall healthiness of the user's current condition and lifestyle.",
+  "reportInsights": "STRING - additional insights or recommendations based only on the user's submitted report."
 }
 
 ---
@@ -95,37 +96,10 @@ You are an AI health assistant that analyzes a user's symptoms and produces a st
 2. Keep 'possibleConditions' broader (e.g., Migraine, Sinusitis) and 'possibleDiseases' more specific (e.g., Chronic Migraine, Acute Sinus Infection).
 3. Always provide at least **3 recommendations** in diet, exercise, and preventive measures.
 4. Urgency must reflect severity (example: chest pain → High, mild headache → Low).
-5. Do not include contradictory advice (e.g., recommending caffeine while also warning against it).
-6. Ensure all required fields are populated.
+5. Ensure "reportInsights" summarizes additional insights derived solely from the user's submitted report.
+6. Do not include contradictory advice.
 7. Always provide a **personalizedHealthScore (1–100)** based on overall healthiness, lifestyle, and severity of symptoms.
-
----
-
-### Example Input (user symptoms):
-"headache, facial pain, migraine, and abdominal pain"
-
-### Example Output (valid JSON only):
-{
-  "possibleConditions": ["Migraine", "Tension Headache", "Sinusitis", "Irritable Bowel Syndrome (IBS)"],
-  "possibleDiseases": ["Chronic Migraine", "Acute Sinus Infection"],
-  "advice": "Your symptoms suggest a mix of headache and digestive issues. While migraines can be managed, the combination with abdominal pain requires medical evaluation. Focus on hydration, regular meals, and stress management until you consult a doctor.",
-  "urgency": "Moderate",
-  "riskFactors": ["Fair sleep quality (5-6 hours/night)", "Moderate stress level"],
-  "doList": ["Stay hydrated", "Practice daily relaxation techniques", "Maintain a consistent sleep schedule"],
-  "dontList": ["Skipping meals", "Excess caffeine or alcohol", "Highly processed foods"],
-  "recommendedNextSteps": ["Consult a general practitioner or neurologist", "Keep a symptom diary", "Discuss potential medication interactions"],
-  "preventiveMeasures": ["Regular exercise", "Identify and avoid migraine triggers", "Consistent sleep patterns", "Mindfulness practices"],
-  "dietRecommendations": {
-    "breakfast": ["Oatmeal with berries and nuts", "Scrambled eggs with whole-wheat toast and avocado"],
-    "lunch": ["Grilled chicken salad", "Quinoa with roasted vegetables"],
-    "dinner": ["Baked salmon with broccoli and brown rice", "Lentil soup with whole-grain bread"],
-    "snacks": ["Apple with almond butter", "Greek yogurt with berries", "A handful of nuts"]
-  },
-  "exercisePlan": ["Walking: 30 mins, 4-5 times/week", "Yoga: 20 mins, 3 times/week", "Light cycling: 20-30 mins, 2 times/week"],
-  "ayurvedicMedications": ["Ashwagandha", "Brahmi", "Peppermint tea"],
-  "followUpActions": ["Schedule follow-up after initial consultation", "Monitor symptom changes", "Regular check-ups for chronic conditions"],
-  "personalizedHealthScore": 62
-}
+8. Fill all required fields; use empty arrays or empty strings for optional fields if not applicable.
 `;
 
 export const ReportSchema = {
@@ -237,6 +211,12 @@ export const ReportSchema = {
       minimum: 1,
       maximum: 100,
     },
+    reportInsights: {
+      type: "ARRAY",
+      description:
+        "Additional insights or recommendations based on the report submited by the user not the other data of the user",
+      items: { type: "STRING" },
+    },
   },
   required: [
     "possibleConditions",
@@ -262,6 +242,7 @@ export const ReportSchema = {
     "ayurvedicMedications",
     "followUpActions",
     "personalizedHealthScore",
+    "reportInsights",
   ],
 };
 
