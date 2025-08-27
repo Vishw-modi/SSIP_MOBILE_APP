@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useWizard } from "../../../context/onboarding-questions";
 import { StepHeader } from "@/components/StepHeader";
 import { NButton } from "@/ui/button";
-import { palette, spacing } from "@/design/tokens";
+import { palette, spacing } from "@/design/styles";
 
 export default function Step1() {
   const router = useRouter();

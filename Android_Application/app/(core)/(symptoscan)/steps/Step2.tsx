@@ -11,7 +11,7 @@ import { MotiView } from "moti";
 import { Easing } from "react-native-reanimated";
 import { useSymptoms } from "../../../../context/symptom-context";
 import { GENDER_OPTIONS, MEDICAL_CONDITIONS } from "./data/options";
-import { palette } from "@/design/tokens";
+import { palette } from "@/design/styles";
 
 const Step2 = () => {
   const router = useRouter();

@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, Text } from "react-native";
 import { Link } from "expo-router";
 import OnboardingSlide from "@/components/OnboardingSlide";
-import { palette } from "@/design/tokens";
+import { palette } from "@/design/styles";
 
 export default function Onboarding4() {
   return (

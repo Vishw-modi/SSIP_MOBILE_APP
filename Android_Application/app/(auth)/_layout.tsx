@@ -1,35 +1,36 @@
-import { Redirect, Stack } from "expo-router";
-import { useAuth } from "@clerk/clerk-expo";
-import { ActivityIndicator, View } from "react-native";
-import { palette } from "@/design/tokens";
+import { Stack } from "expo-router";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { useTheme } from "../../context/theme-context";
 
-// Auth stack only when unauthenticated.
-// Note: user-details moved to (onboarding) group.
-export default function AuthRoutesLayout() {
-  const { isLoaded, isSignedIn } = useAuth();
-
-  if (!isLoaded) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "#fff",
-        }}
-      >
-        <ActivityIndicator color={palette.primary} />
-      </View>
-    );
-  }
-
-  if (isSignedIn) return <Redirect href="/welcome" />;
+const Layout = () => {
+  const { palette } = useTheme();
 
   return (
-    <Stack>
-      <Stack.Screen name="sign-in" options={{ headerShown: false }} />
-      <Stack.Screen name="sign-up" options={{ headerShown: false }} />
-      <Stack.Screen name="reset" options={{ headerShown: false }} />
-    </Stack>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <BottomSheetModalProvider>
+        <Stack
+          screenOptions={{
+            contentStyle: {
+              backgroundColor: palette.bg,
+            },
+            headerStyle: {
+              backgroundColor: palette.card,
+            },
+            headerTintColor: palette.text,
+            headerTitleStyle: {
+              color: palette.text,
+              fontWeight: "600",
+            },
+            headerShadowVisible: false,
+            headerLargeTitle: false,
+          }}
+        >
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   );
-}
+};
+
+export default Layout;

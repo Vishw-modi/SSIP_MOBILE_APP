@@ -6,8 +6,9 @@ import {
   TouchableOpacity,
   type ViewStyle,
 } from "react-native";
-import { palette, radii, spacing } from "@/design/tokens";
-import { ReactElement } from "react";
+import { radii, spacing, typography } from "@/design/styles";
+import { useTheme } from "../../context/theme-context";
+import { JSX, ReactElement } from "react";
 
 type Variant = "primary" | "secondary" | "ghost" | "danger";
 type Size = "md" | "lg";
@@ -32,8 +33,10 @@ export function NButton({
   loading,
   fullWidth,
   style,
-}: ButtonProps) {
-  const styles = getStyles({ variant, size, fullWidth, disabled });
+}: ButtonProps): JSX.Element {
+  const { palette } = useTheme();
+  const styles = getStyles({ variant, size, fullWidth, disabled, palette });
+
   return (
     <TouchableOpacity
       disabled={disabled || loading}
@@ -42,7 +45,7 @@ export function NButton({
     >
       {loading ? (
         <ActivityIndicator
-          color={variant === "secondary" ? palette.text : "#fff"}
+          color={getActivityIndicatorColor(variant, palette)}
         />
       ) : (
         <Text style={styles.text}>{title}</Text>
@@ -51,39 +54,86 @@ export function NButton({
   );
 }
 
+function getActivityIndicatorColor(variant: Variant, palette: any): string {
+  switch (variant) {
+    case "secondary":
+    case "ghost":
+      return palette.text;
+    case "danger":
+      return palette.textInverse;
+    case "primary":
+    default:
+      return palette.textInverse;
+  }
+}
+
 function getStyles({
   variant,
   size,
   fullWidth,
   disabled,
+  palette,
 }: {
   variant: Variant;
   size: Size;
   fullWidth?: boolean;
   disabled?: boolean;
+  palette: any;
 }) {
+  const getBackgroundColor = (): string => {
+    switch (variant) {
+      case "primary":
+        return palette.primary;
+      case "secondary":
+        return palette.card;
+      case "danger":
+        return palette.danger;
+      case "ghost":
+      default:
+        return "transparent";
+    }
+  };
+
+  const getTextColor = (): string => {
+    switch (variant) {
+      case "secondary":
+      case "ghost":
+        return palette.text;
+      case "danger":
+      case "primary":
+      default:
+        return palette.textInverse;
+    }
+  };
+
+  const getBorderColor = (): string => {
+    switch (variant) {
+      case "secondary":
+        return palette.border;
+      case "ghost":
+        return palette.borderLight;
+      default:
+        return "transparent";
+    }
+  };
+
   const base: ViewStyle = {
-    backgroundColor:
-      variant === "primary"
-        ? palette.primary
-        : variant === "secondary"
-        ? "#fff"
-        : variant === "danger"
-        ? palette.danger
-        : "transparent",
-    borderRadius: radii.lg,
+    backgroundColor: getBackgroundColor(),
+    borderRadius: radii.button,
     paddingVertical: size === "lg" ? spacing.md : spacing.sm,
     paddingHorizontal: spacing.xl,
-    borderWidth: variant === "secondary" ? 1 : 0,
-    borderColor: variant === "secondary" ? palette.border : "transparent",
+    borderWidth: variant === "secondary" || variant === "ghost" ? 1 : 0,
+    borderColor: getBorderColor(),
     alignItems: "center",
-    opacity: disabled ? 0.6 : 1,
+    opacity: disabled ? 0.4 : 1,
     width: fullWidth ? "100%" : undefined,
   };
+
   const text = {
-    color: variant === "secondary" ? palette.text : "#fff",
+    ...typography.button,
     fontSize: size === "lg" ? 16 : 14,
-    fontWeight: "700" as const,
+    color: getTextColor(),
   };
+
   return StyleSheet.create({ base, text });
 }

@@ -13,7 +13,7 @@ import { MotiView } from "moti";
 import { Easing } from "react-native-reanimated";
 import { useSymptoms } from "../../../../context/symptom-context";
 import { DIET_OPTIONS, EXERCISE_OPTIONS, SLEEP_OPTIONS } from "./data/options";
-import { palette } from "@/design/tokens";
+import { palette } from "@/design/styles";
 
 export default function Lifestyle() {
   const router = useRouter();

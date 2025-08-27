@@ -13,7 +13,7 @@ import { MotiView } from "moti";
 import { Easing } from "react-native-reanimated";
 import { useSymptoms } from "../../../../context/symptom-context";
 import { router } from "expo-router";
-import { palette } from "@/design/tokens";
+import { palette } from "@/design/styles";
 
 export default function SymptoScan() {
   const {

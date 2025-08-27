@@ -2,24 +2,39 @@ import { useFonts } from "expo-font";
 import { ClerkProvider } from "@clerk/clerk-expo";
 import { Slot } from "expo-router";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { StyleSheet, useColorScheme } from "react-native";
-import { palette } from "@/design/tokens";
+import { LogBox, StatusBar, StyleSheet } from "react-native";
 import * as SecureStore from "expo-secure-store";
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
+import { ThemeProvider, useTheme } from "../context/theme-context";
+
+// Inner component that uses theme
+function ThemedApp() {
+  const { palette, isDark } = useTheme();
+
+  return (
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: palette.bg }]}
+      edges={["top"]}
+    >
+      <StatusBar
+        barStyle={isDark ? "light-content" : "dark-content"}
+        backgroundColor={palette.bg}
+      />
+      <Slot />
+    </SafeAreaView>
+  );
+}
 
 export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
-  const colorScheme = useColorScheme();
   if (!loaded) {
     return null;
   }
+
+  LogBox.ignoreLogs(["Clerk: Clerk has been loaded with development keys"]);
+
   const tokenCache = {
     async getToken(key: string) {
       try {
@@ -41,15 +56,11 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <ClerkProvider tokenCache={tokenCache}>
-        <ThemeProvider
-          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-        >
-          <SafeAreaView style={styles.container} edges={["top"]}>
-            <Slot />
-          </SafeAreaView>
-        </ThemeProvider>
-      </ClerkProvider>
+      <ThemeProvider>
+        <ClerkProvider tokenCache={tokenCache}>
+          <ThemedApp />
+        </ClerkProvider>
+      </ThemeProvider>
     </SafeAreaProvider>
   );
 }
@@ -57,7 +68,6 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: palette.bg, // match your theme
-    paddingTop: 6, // extra breathing room on top
+    // Remove the manual paddingTop - SafeAreaView handles this
   },
 });
