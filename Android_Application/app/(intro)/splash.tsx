@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
-import { spacing } from "@/design/tokens";
+import { spacing } from "@/design/styles";
 
 export default function SplashScreen() {
   const router = useRouter();

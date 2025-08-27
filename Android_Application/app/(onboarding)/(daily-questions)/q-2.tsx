@@ -4,7 +4,7 @@ import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 import { NButton } from "@/ui/button";
-import { spacing } from "@/design/tokens";
+import { spacing } from "@/design/styles";
 import { StepHeader } from "@/components/StepHeader";
 import { useWizard } from "../../../context/onboarding-questions";
 

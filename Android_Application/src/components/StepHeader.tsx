@@ -1,4 +1,4 @@
-import { radii, spacing } from "@/design/tokens";
+import { radii, spacing } from "@/design/styles";
 import type React from "react";
 import { StyleSheet, Text, View } from "react-native";
 

@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { spacing } from "@/design/tokens";
+import { spacing } from "@/design/styles";
 import { StepHeader } from "@/components/StepHeader";
 import { useWizard } from "../../../context/onboarding-questions";
 

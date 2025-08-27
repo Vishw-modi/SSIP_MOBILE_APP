@@ -3,7 +3,7 @@ import type React from "react";
 import type { ImageSourcePropType } from "react-native";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { RelativePathString, useRouter } from "expo-router";
-import { palette, spacing, typography } from "@/design/tokens";
+import { palette, spacing, typography } from "@/design/styles";
 
 type Props = {
   image: ImageSourcePropType;

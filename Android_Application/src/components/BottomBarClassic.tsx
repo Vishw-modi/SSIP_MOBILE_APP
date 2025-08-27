@@ -1,89 +1,219 @@
-import React from "react";
-import {
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-  GestureResponderEvent,
-} from "react-native";
+import React, { JSX } from "react";
+import { View, Pressable, Platform, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { palette } from "@/design/tokens";
-import { useGlobalModal } from "../../context/modal-provider";
+import { useTheme } from "../../context/theme-context";
+
+// Type definitions
+type RouteIconConfig = {
+  focused: keyof typeof Ionicons.glyphMap;
+  unfocused: keyof typeof Ionicons.glyphMap;
+};
+
+type RouteIcons = {
+  [key: string]: RouteIconConfig;
+};
 
 type Route = {
+  name: string;
   key: string;
-  title: string;
-  icon: keyof typeof Ionicons.glyphMap | string;
 };
 
-type BottomBarClassicProps = {
-  state: {
-    index: number;
-    routes: Route[];
-  };
-  navigation: {
-    navigate: (tabKey: string) => void;
+type TabBarDescriptor = {
+  options: {
+    tabBarAccessibilityLabel?: string;
+    title?: string;
   };
 };
 
-const CENTER_BLUE = "#4F46E5";
+type NavigationState = {
+  routes: Route[];
+  index: number;
+};
+
+type NavigationEmitOptions = {
+  type: string;
+  target: string;
+  canPreventDefault?: boolean;
+};
+
+type NavigationEvent = {
+  defaultPrevented: boolean;
+};
+
+type Navigation = {
+  emit: (options: NavigationEmitOptions) => NavigationEvent;
+  navigate: (routeName: string) => void;
+};
+
+export interface BottomBarClassicProps {
+  state: NavigationState;
+  descriptors: { [key: string]: TabBarDescriptor };
+  navigation: Navigation;
+  onCenterPress: () => void;
+}
+
+// Define your route icons and configuration
+const ROUTE_ICONS: RouteIcons = {
+  home: { focused: "home", unfocused: "home-outline" },
+  chat: { focused: "chatbubbles", unfocused: "chatbubbles-outline" },
+  dailytask: {
+    focused: "calendar-clear-sharp",
+    unfocused: "calendar-outline",
+  },
+  profile: { focused: "person", unfocused: "person-outline" },
+};
+
+const ROUTES_WITH_DOT = new Set(["dailytask"]);
 
 export default function BottomBarClassic({
   state,
+  descriptors,
   navigation,
-}: BottomBarClassicProps) {
-  const { index, routes } = state;
-  const { open } = useGlobalModal();
+  onCenterPress,
+}: BottomBarClassicProps): JSX.Element {
+  const { palette } = useTheme(); // Use theme hook
+  const { routes, index } = state;
 
-  const left = routes.slice(0, 2);
-  const right = routes.slice(2);
+  const renderTabItem = (
+    route: Route,
+    routeIndex: number
+  ): JSX.Element | null => {
+    const { options } = descriptors[route.key];
+    const isFocused = index === routeIndex;
+    const color = isFocused ? palette.primary : palette.textMuted; // Use theme colors
 
-  const renderItem = (route: Route) => {
-    const realIndex = routes.findIndex((r) => r.key === route.key);
-    const isFocused = realIndex === index;
-    const color = isFocused ? palette.primary : "#9CA3AF";
+    // Get icon configuration for this route
+    const iconConfig = ROUTE_ICONS[route.name];
+    if (!iconConfig) {
+      console.warn(`No icon configuration found for route: ${route.name}`);
+      return null;
+    }
 
-    const onPress = (e: GestureResponderEvent) => {
-      e.preventDefault();
-      navigation.navigate(route.key);
+    const iconName = isFocused ? iconConfig.focused : iconConfig.unfocused;
+    const showDot = ROUTES_WITH_DOT.has(route.name);
+
+    const onPress = (): void => {
+      const event = navigation.emit({
+        type: "tabPress",
+        target: route.key,
+        canPreventDefault: true,
+      });
+
+      if (!isFocused && !event.defaultPrevented) {
+        navigation.navigate(route.name);
+      }
     };
 
-    const showGreenDot = realIndex === routes.length - 1;
+    const onLongPress = (): void => {
+      navigation.emit({
+        type: "tabLongPress",
+        target: route.key,
+      });
+    };
 
-    // If focused, use the filled icon (remove "-outline")
-    const iconName = isFocused
-      ? (route.icon.replace("-outline", "") as keyof typeof Ionicons.glyphMap)
-      : (route.icon as keyof typeof Ionicons.glyphMap);
+    // Create dynamic styles for this tab item
+    const tabItemStyles = StyleSheet.create({
+      iconWrap: {
+        position: "relative",
+        height: 28,
+        justifyContent: "center",
+      },
+      dot: {
+        position: "absolute",
+        right: -4,
+        top: -2,
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+        backgroundColor: palette.accent, // Use theme accent color
+      },
+    });
 
     return (
       <Pressable
         key={route.key}
+        accessibilityRole="button"
+        accessibilityState={isFocused ? { selected: true } : {}}
+        accessibilityLabel={options.tabBarAccessibilityLabel}
         onPress={onPress}
-        style={styles.item}
-        android_ripple={{ color: "rgba(0,0,0,0.06)", borderless: true }}
+        onLongPress={onLongPress}
+        style={styles.tabItem}
+        android_ripple={{
+          color: palette.primary + "10", // Use theme-aware ripple
+          borderless: true,
+        }}
       >
-        <View style={styles.iconWrap}>
-          <Ionicons name={iconName} size={22} color={color} />
-          {showGreenDot && <View style={styles.dot} />}
+        <View style={tabItemStyles.iconWrap}>
+          <Ionicons name={iconName} size={26} color={color} />
+          {showDot && <View style={tabItemStyles.dot} />}
         </View>
-        <Text style={[styles.label, { color }]} numberOfLines={1}>
-          {route.title}
-        </Text>
       </Pressable>
     );
   };
 
-  return (
-    <View style={styles.container}>
-      {/* Left items */}
-      <View style={styles.sideGroup}>{left.map(renderItem)}</View>
+  // Create dynamic styles that use current theme
+  const dynamicStyles = StyleSheet.create({
+    container: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: 10,
+      backgroundColor: palette.card, // Use theme card background
+      borderTopWidth: 1,
+      borderTopColor: palette.border, // Use theme border color
+      paddingTop: 10,
+      paddingBottom: 10 + (Platform.OS === "ios" ? 8 : 0),
+    },
+    centerBtn: {
+      width: 58,
+      height: 58,
+      borderRadius: 29,
+      alignItems: "center",
+      justifyContent: "center",
+      marginHorizontal: 4,
+    },
+    centerHalo: {
+      position: "absolute",
+      width: 58,
+      height: 58,
+      borderRadius: 29,
+      backgroundColor: palette.primary + "10", // Use theme primary with opacity
+      borderWidth: 1,
+      borderColor: palette.primary + "40", // Use theme primary with opacity
+    },
+    centerInner: {
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      backgroundColor: palette.card, // Use theme card background
+      alignItems: "center",
+      justifyContent: "center",
+      borderWidth: 2,
+      borderColor: palette.primary, // Use theme primary color
+      shadowColor: palette.text + "20", // Use theme-aware shadow
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.06,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+  });
 
-      {/* Center "+" button */}
+  return (
+    <View style={dynamicStyles.container}>
+      {/* First two tabs (home, chat) */}
+      <View style={styles.sideGroup}>
+        {routes
+          .slice(0, 2)
+          .map((route, routeIndex) => renderTabItem(route, routeIndex))}
+      </View>
+
+      {/* Center action button at position 3 */}
       <Pressable
-        onPress={open}
+        accessibilityRole="button"
+        accessibilityLabel="Open actions menu"
+        onPress={onCenterPress}
         style={({ pressed }) => [
-          styles.centerBtn,
+          dynamicStyles.centerBtn,
           pressed &&
             Platform.select({
               android: { opacity: 0.85 },
@@ -91,93 +221,33 @@ export default function BottomBarClassic({
             }),
         ]}
       >
-        <View style={styles.centerHalo} />
-        <View style={styles.centerInner}>
-          <Ionicons name="add" size={22} color={CENTER_BLUE} />
+        <View style={dynamicStyles.centerHalo} />
+        <View style={dynamicStyles.centerInner}>
+          <Ionicons name="apps" size={26} color={palette.primary} />
         </View>
       </Pressable>
 
-      {/* Right items */}
-      <View style={styles.sideGroup}>{right.map(renderItem)}</View>
+      {/* Last two tabs (dailytask, profile) */}
+      <View style={styles.sideGroup}>
+        {routes
+          .slice(2)
+          .map((route, routeIndex) => renderTabItem(route, routeIndex + 2))}
+      </View>
     </View>
   );
 }
 
-const BAR_BG = "#FFFFFF";
-
+// Static styles that don't need theming
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 10,
-    backgroundColor: BAR_BG,
-    borderTopWidth: 1,
-    borderTopColor: "#E5E7EB",
-    paddingTop: 10,
-    paddingBottom: 10 + (Platform.OS === "ios" ? 8 : 0),
-  },
   sideGroup: {
     flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
     flex: 1,
-    justifyContent: "space-evenly",
   },
-  item: {
+  tabItem: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    minWidth: 60,
-    gap: 2,
-  },
-  iconWrap: {
-    position: "relative",
-    height: 24,
-    justifyContent: "center",
-  },
-  label: {
-    fontSize: 11,
-    fontWeight: "600",
-  },
-  centerBtn: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-    alignItems: "center",
-    justifyContent: "center",
-    marginHorizontal: 4,
-  },
-  centerHalo: {
-    position: "absolute",
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-    backgroundColor: "rgba(79, 70, 229, 0.10)",
-    borderWidth: 1,
-    borderColor: "rgba(79, 70, 229, 0.25)",
-  },
-  centerInner: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: "#FFFFFF",
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 2,
-    borderColor: CENTER_BLUE,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  dot: {
-    position: "absolute",
-    right: -4,
-    top: -2,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: palette.primary,
+    minHeight: 48,
+    paddingVertical: 8,
   },
 });

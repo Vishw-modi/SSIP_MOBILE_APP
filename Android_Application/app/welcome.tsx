@@ -1,7 +1,7 @@
 import { ActivityIndicator, Image, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth, useUser } from "@clerk/clerk-expo";
-import { palette, spacing } from "@/design/tokens";
+import { palette, spacing } from "@/design/styles";
 import { NButton } from "@/ui/button";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -126,14 +126,14 @@ export default function WelcomeScreen() {
             title="Sign In"
             fullWidth
             style={{ backgroundColor: "#4F6EF7", borderRadius: 999 }}
-            onPress={() => router.push("/(auth)/sign-in")}
+            onPress={() => router.push("/(public)/sign-in")}
           />
           <NButton
             title="Register with Us"
             fullWidth
             variant="secondary"
             style={{ borderRadius: 999 }}
-            onPress={() => router.push("/(auth)/sign-up")}
+            onPress={() => router.push("/(public)/sign-up")}
           />
         </View>
       </View>

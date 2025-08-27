@@ -45,34 +45,34 @@ export default function Dialog({
       title: "Meal Calorie Tracker",
       subtitle: "Scan meals & get full nutrition info",
       icon: "fast-food", // food-style icon
-      color: "#F59E0B",
+      color: "#8B5CF6",
       onPress: () => {
         router.push("/(core)/(caltrack)/Caltrack");
         onClose();
       },
     },
-    {
-      id: "document",
-      title: "Upload Document",
-      subtitle: "Select a file to upload",
-      icon: "document-text",
-      color: "#F59E0B",
-      onPress: () => {
-        console.log("Document selected");
-        onClose();
-      },
-    },
-    {
-      id: "link",
-      title: "Add Link",
-      subtitle: "Paste or enter a URL",
-      icon: "link",
-      color: "#8B5CF6",
-      onPress: () => {
-        console.log("Link selected");
-        onClose();
-      },
-    },
+    // {
+    //   id: "document",
+    //   title: "Upload Document",
+    //   subtitle: "Select a file to upload",
+    //   icon: "document-text",
+    //   color: "#F59E0B",
+    //   onPress: () => {
+    //     console.log("Document selected");
+    //     onClose();
+    //   },
+    // },
+    // {
+    //   id: "link",
+    //   title: "Add Link",
+    //   subtitle: "Paste or enter a URL",
+    //   icon: "link",
+    //   color: "#8B5CF6",
+    //   onPress: () => {
+    //     console.log("Link selected");
+    //     onClose();
+    //   },
+    // },
   ];
 
   const modalOptions = options.length > 0 ? options : defaultOptions;
@@ -117,7 +117,7 @@ export default function Dialog({
             },
           ]}
         >
-          <MotiView
+          {/* <MotiView
             from={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 200 }}
@@ -130,7 +130,7 @@ export default function Dialog({
             >
               <Ionicons name="close" size={20} color="#6B7280" />
             </Pressable>
-          </MotiView>
+          </MotiView> */}
 
           {/* Header */}
           <View style={styles.header}>
