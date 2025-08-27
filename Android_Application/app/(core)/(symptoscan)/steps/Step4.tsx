@@ -871,7 +871,7 @@ const Step4 = () => {
         } as any);
       });
 
-      console.log("formData", formData);
+      // console.log("formData", formData);
 
       const response = await fetch(`${BACKEND_URL}/api/generate-report`, {
         method: "POST",

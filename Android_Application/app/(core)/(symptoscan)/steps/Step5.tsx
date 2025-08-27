@@ -9,8 +9,11 @@ import {
   SafeAreaView,
   StatusBar,
 } from "react-native";
+
 import { Ionicons } from "@expo/vector-icons";
+import { MotiView } from "moti";
 import type { AnalysisResult } from "./Step4";
+
 import { router } from "expo-router";
 // Updated interface to match the backend data structure
 
@@ -267,178 +270,271 @@ const Step5 = ({ analysisResult }: { analysisResult: AnalysisResult }) => {
 
         <AdviceCard />
         <ConditionsCard />
+        {activeTab === "Overview" && (
+          <MotiView
+            from={{ translateY: 40 }}
+            animate={{ translateY: 0 }}
+            exit={{ translateY: 40 }}
+            transition={{ type: "spring", damping: 14, stiffness: 120 }}
+          >
+            <ExpandableSection
+              title="Follow-up Actions"
+              icon="checkmark-circle-outline"
+              sectionKey="followUp"
+              iconColor="#10B981"
+            >
+              {(analysisResult.followUpActions || []).map((action, index) => (
+                <View key={index} style={styles.actionItem}>
+                  <Ionicons name="checkmark" size={16} color="#10B981" />
+                  <Text style={styles.actionText}>{action}</Text>
+                </View>
+              ))}
+            </ExpandableSection>
 
-        <ExpandableSection
-          title="Follow-up Actions"
-          icon="checkmark-circle-outline"
-          sectionKey="followUp"
-          iconColor="#10B981"
-        >
-          {(analysisResult.followUpActions || []).map((action, index) => (
-            <View key={index} style={styles.actionItem}>
-              <Ionicons name="checkmark" size={16} color="#10B981" />
-              <Text style={styles.actionText}>{action}</Text>
-            </View>
-          ))}
-        </ExpandableSection>
+            <ExpandableSection
+              title="Risk Factors"
+              icon="warning-outline"
+              sectionKey="riskFactors"
+              iconColor="#F59E0B"
+            >
+              {(analysisResult.riskFactors || []).map((risk, index) => (
+                <View key={index} style={styles.actionItem}>
+                  <Ionicons name="alert-circle" size={16} color="#F59E0B" />
+                  <Text style={styles.actionText}>{risk}</Text>
+                </View>
+              ))}
+            </ExpandableSection>
 
-        <ExpandableSection
-          title="Risk Factors"
-          icon="warning-outline"
-          sectionKey="riskFactors"
-          iconColor="#F59E0B"
-        >
-          {(analysisResult.riskFactors || []).map((risk, index) => (
-            <View key={index} style={styles.actionItem}>
-              <Ionicons name="alert-circle" size={16} color="#F59E0B" />
-              <Text style={styles.actionText}>{risk}</Text>
-            </View>
-          ))}
-        </ExpandableSection>
+            <ExpandableSection
+              title="Possible Diseases"
+              icon="medical-outline"
+              sectionKey="diseases"
+              iconColor="#8B5CF6"
+            >
+              {(analysisResult.possibleDiseases || []).map((disease, index) => (
+                <View key={index} style={styles.actionItem}>
+                  <Ionicons name="medical" size={16} color="#8B5CF6" />
+                  <Text style={styles.actionText}>{disease}</Text>
+                </View>
+              ))}
+            </ExpandableSection>
 
-        <ExpandableSection
-          title="Possible Diseases"
-          icon="medical-outline"
-          sectionKey="diseases"
-          iconColor="#8B5CF6"
-        >
-          {(analysisResult.possibleDiseases || []).map((disease, index) => (
-            <View key={index} style={styles.actionItem}>
-              <Ionicons name="medical" size={16} color="#8B5CF6" />
-              <Text style={styles.actionText}>{disease}</Text>
-            </View>
-          ))}
-        </ExpandableSection>
+            <ExpandableSection
+              title="Preventive Measures"
+              icon="shield-checkmark-outline"
+              sectionKey="preventive"
+              iconColor="#06B6D4"
+            >
+              {(analysisResult.preventiveMeasures || []).map(
+                (measure, index) => (
+                  <View key={index} style={styles.actionItem}>
+                    <Ionicons
+                      name="shield-checkmark"
+                      size={16}
+                      color="#06B6D4"
+                    />
+                    <Text style={styles.actionText}>{measure}</Text>
+                  </View>
+                )
+              )}
+            </ExpandableSection>
+          </MotiView>
+        )}
+        {activeTab === "Details" && (
+          <MotiView
+            from={{ translateY: 40 }}
+            animate={{ translateY: 0 }}
+            exit={{ translateY: 40 }}
+            transition={{ type: "spring", damping: 14, stiffness: 120 }}
+          >
+            <ExpandableSection
+              title="Follow-up Actions"
+              icon="checkmark-circle-outline"
+              sectionKey="followUp"
+              iconColor="#10B981"
+            >
+              {(analysisResult.followUpActions || []).map((action, index) => (
+                <View key={index} style={styles.actionItem}>
+                  <Ionicons name="checkmark" size={16} color="#10B981" />
+                  <Text style={styles.actionText}>{action}</Text>
+                </View>
+              ))}
+            </ExpandableSection>
 
-        <ExpandableSection
-          title="Preventive Measures"
-          icon="shield-checkmark-outline"
-          sectionKey="preventive"
-          iconColor="#06B6D4"
-        >
-          {(analysisResult.preventiveMeasures || []).map((measure, index) => (
-            <View key={index} style={styles.actionItem}>
-              <Ionicons name="shield-checkmark" size={16} color="#06B6D4" />
-              <Text style={styles.actionText}>{measure}</Text>
-            </View>
-          ))}
-        </ExpandableSection>
+            <ExpandableSection
+              title="Risk Factors"
+              icon="warning-outline"
+              sectionKey="riskFactors"
+              iconColor="#F59E0B"
+            >
+              {(analysisResult.riskFactors || []).map((risk, index) => (
+                <View key={index} style={styles.actionItem}>
+                  <Ionicons name="alert-circle" size={16} color="#F59E0B" />
+                  <Text style={styles.actionText}>{risk}</Text>
+                </View>
+              ))}
+            </ExpandableSection>
 
-        <ExpandableSection
-          title="Do's"
-          icon="checkmark-circle"
-          sectionKey="dos"
-          iconColor="#10B981"
-        >
-          {(analysisResult.doList || []).map((item, index) => (
-            <View key={index} style={styles.actionItem}>
-              <Ionicons name="checkmark" size={16} color="#10B981" />
-              <Text style={styles.actionText}>{item}</Text>
-            </View>
-          ))}
-        </ExpandableSection>
+            <ExpandableSection
+              title="Possible Diseases"
+              icon="medical-outline"
+              sectionKey="diseases"
+              iconColor="#8B5CF6"
+            >
+              {(analysisResult.possibleDiseases || []).map((disease, index) => (
+                <View key={index} style={styles.actionItem}>
+                  <Ionicons name="medical" size={16} color="#8B5CF6" />
+                  <Text style={styles.actionText}>{disease}</Text>
+                </View>
+              ))}
+            </ExpandableSection>
 
-        <ExpandableSection
-          title="Don'ts"
-          icon="close-circle"
-          sectionKey="donts"
-          iconColor="#EF4444"
-        >
-          {(analysisResult.dontList || []).map((item, index) => (
-            <View key={index} style={styles.actionItem}>
-              <Ionicons name="close" size={16} color="#EF4444" />
-              <Text style={styles.actionText}>{item}</Text>
-            </View>
-          ))}
-        </ExpandableSection>
+            <ExpandableSection
+              title="Preventive Measures"
+              icon="shield-checkmark-outline"
+              sectionKey="preventive"
+              iconColor="#06B6D4"
+            >
+              {(analysisResult.preventiveMeasures || []).map(
+                (measure, index) => (
+                  <View key={index} style={styles.actionItem}>
+                    <Ionicons
+                      name="shield-checkmark"
+                      size={16}
+                      color="#06B6D4"
+                    />
+                    <Text style={styles.actionText}>{measure}</Text>
+                  </View>
+                )
+              )}
+            </ExpandableSection>
+            <ExpandableSection
+              title="Do's"
+              icon="checkmark-circle"
+              sectionKey="dos"
+              iconColor="#10B981"
+            >
+              {(analysisResult.doList || []).map((item, index) => (
+                <View key={index} style={styles.actionItem}>
+                  <Ionicons name="checkmark" size={16} color="#10B981" />
+                  <Text style={styles.actionText}>{item}</Text>
+                </View>
+              ))}
+            </ExpandableSection>
 
-        <ExpandableSection
-          title="Diet Recommendations"
-          icon="restaurant-outline"
-          sectionKey="diet"
-          iconColor="#F97316"
-        >
-          <View style={styles.dietSection}>
-            <Text style={styles.dietMealTitle}>Breakfast</Text>
-            {(analysisResult.dietRecommendations?.breakfast || []).map(
-              (item, index) => (
-                <Text key={index} style={styles.dietItem}>
-                  • {item}
-                </Text>
-              )
-            )}
+            <ExpandableSection
+              title="Don'ts"
+              icon="close-circle"
+              sectionKey="donts"
+              iconColor="#EF4444"
+            >
+              {(analysisResult.dontList || []).map((item, index) => (
+                <View key={index} style={styles.actionItem}>
+                  <Ionicons name="close" size={16} color="#EF4444" />
+                  <Text style={styles.actionText}>{item}</Text>
+                </View>
+              ))}
+            </ExpandableSection>
 
-            <Text style={styles.dietMealTitle}>Lunch</Text>
-            {(analysisResult.dietRecommendations?.lunch || []).map(
-              (item, index) => (
-                <Text key={index} style={styles.dietItem}>
-                  • {item}
-                </Text>
-              )
-            )}
+            <ExpandableSection
+              title="Diet Recommendations"
+              icon="restaurant-outline"
+              sectionKey="diet"
+              iconColor="#F97316"
+            >
+              <View style={styles.dietSection}>
+                <Text style={styles.dietMealTitle}>Breakfast</Text>
+                {(analysisResult.dietRecommendations?.breakfast || []).map(
+                  (item, index) => (
+                    <Text key={index} style={styles.dietItem}>
+                      • {item}
+                    </Text>
+                  )
+                )}
 
-            <Text style={styles.dietMealTitle}>Dinner</Text>
-            {(analysisResult.dietRecommendations?.dinner || []).map(
-              (item, index) => (
-                <Text key={index} style={styles.dietItem}>
-                  • {item}
-                </Text>
-              )
-            )}
+                <Text style={styles.dietMealTitle}>Lunch</Text>
+                {(analysisResult.dietRecommendations?.lunch || []).map(
+                  (item, index) => (
+                    <Text key={index} style={styles.dietItem}>
+                      • {item}
+                    </Text>
+                  )
+                )}
 
-            <Text style={styles.dietMealTitle}>Snacks</Text>
-            {(analysisResult.dietRecommendations?.snacks || []).map(
-              (item, index) => (
-                <Text key={index} style={styles.dietItem}>
-                  • {item}
-                </Text>
-              )
-            )}
-          </View>
-        </ExpandableSection>
+                <Text style={styles.dietMealTitle}>Dinner</Text>
+                {(analysisResult.dietRecommendations?.dinner || []).map(
+                  (item, index) => (
+                    <Text key={index} style={styles.dietItem}>
+                      • {item}
+                    </Text>
+                  )
+                )}
 
-        <ExpandableSection
-          title="Exercise Plan"
-          icon="fitness-outline"
-          sectionKey="exercise"
-          iconColor="#8B5CF6"
-        >
-          {(analysisResult.exercisePlan || []).map((exercise, index) => (
-            <View key={index} style={styles.actionItem}>
-              <Ionicons name="fitness" size={16} color="#8B5CF6" />
-              <Text style={styles.actionText}>{exercise}</Text>
-            </View>
-          ))}
-        </ExpandableSection>
-
-        <ExpandableSection
-          title="Ayurvedic Medications"
-          icon="leaf-outline"
-          sectionKey="ayurvedic"
-          iconColor="#059669"
-        >
-          {(analysisResult.ayurvedicMedications || []).map(
-            (medication, index) => (
-              <View key={index} style={styles.actionItem}>
-                <Ionicons name="leaf" size={16} color="#059669" />
-                <Text style={styles.actionText}>{medication}</Text>
+                <Text style={styles.dietMealTitle}>Snacks</Text>
+                {(analysisResult.dietRecommendations?.snacks || []).map(
+                  (item, index) => (
+                    <Text key={index} style={styles.dietItem}>
+                      • {item}
+                    </Text>
+                  )
+                )}
               </View>
-            )
-          )}
-        </ExpandableSection>
-        <ExpandableSection
-          title="Report Insight"
-          icon="book-outline"
-          sectionKey="reportInsight"
-          iconColor="#8B5CF6"
-        >
-          {(analysisResult.reportInsights || []).map((insight, index) => (
-            <View key={index} style={styles.actionItem}>
-              <Ionicons name="book" size={16} color="#8B5CF6" />
-              <Text style={styles.actionText}>{insight}</Text>
-            </View>
-          ))}
-        </ExpandableSection>
+            </ExpandableSection>
+
+            <ExpandableSection
+              title="Exercise Plan"
+              icon="fitness-outline"
+              sectionKey="exercise"
+              iconColor="#8B5CF6"
+            >
+              {(analysisResult.exercisePlan || []).map((exercise, index) => (
+                <View key={index} style={styles.actionItem}>
+                  <Ionicons name="fitness" size={16} color="#8B5CF6" />
+                  <Text style={styles.actionText}>{exercise}</Text>
+                </View>
+              ))}
+            </ExpandableSection>
+
+            <ExpandableSection
+              title="Ayurvedic Medications"
+              icon="leaf-outline"
+              sectionKey="ayurvedic"
+              iconColor="#059669"
+            >
+              {(analysisResult.ayurvedicMedications || []).map(
+                (medication, index) => (
+                  <View key={index} style={styles.actionItem}>
+                    <Ionicons name="leaf" size={16} color="#059669" />
+                    <Text style={styles.actionText}>{medication}</Text>
+                  </View>
+                )
+              )}
+            </ExpandableSection>
+          </MotiView>
+        )}
+
+        {activeTab === "Report Analysis" && (
+          <MotiView
+            from={{ translateY: 40 }}
+            animate={{ translateY: 0 }}
+            exit={{ translateY: 40 }}
+            transition={{ type: "spring", damping: 14, stiffness: 120 }}
+          >
+            <ExpandableSection
+              title="Report Insight"
+              icon="book-outline"
+              sectionKey="reportInsight"
+              iconColor="#8B5CF6"
+            >
+              {(analysisResult.reportInsights || []).map((insight, index) => (
+                <View key={index} style={styles.actionItem}>
+                  <Ionicons name="book" size={16} color="#8B5CF6" />
+                  <Text style={styles.actionText}>{insight}</Text>
+                </View>
+              ))}
+            </ExpandableSection>
+          </MotiView>
+        )}
 
         {/* Download Button */}
         <TouchableOpacity style={styles.downloadButton}>

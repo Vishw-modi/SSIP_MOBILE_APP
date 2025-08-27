@@ -1,5 +1,3 @@
-"use client";
-
 import {
   createContext,
   useContext,
@@ -82,7 +80,7 @@ const DEFAULT_DEMOGRAPHICS: Demographics = {
 const DEFAULT_LIFESTYLE: Lifestyle = {
   exerciseFrequency: null,
   sleepQuality: null,
-  stress: 50,
+  stress: 0,
   diet: null,
   recentChanges: "",
 };
