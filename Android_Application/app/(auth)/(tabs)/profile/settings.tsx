@@ -15,6 +15,7 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 export default function SettingsScreen() {
   const { theme, palette, isDark } = useTheme();
   const themeSheetRef = useRef<BottomSheetModal>(null);
+
   const getThemeDisplayText = () => {
     switch (theme) {
       case "light":

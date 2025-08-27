@@ -63,7 +63,7 @@ const ROUTE_ICONS: RouteIcons = {
   profile: { focused: "person", unfocused: "person-outline" },
 };
 
-const ROUTES_WITH_DOT = new Set(["chat", "dailytask"]);
+const ROUTES_WITH_DOT = new Set(["dailytask"]);
 
 export default function BottomBarClassic({
   state,

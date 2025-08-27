@@ -21,7 +21,7 @@ export const generateReport = async (req, res) => {
     // console.log("The data that came from the front end:", data);
 
     const uploadedFiles = req.files || [];
-    console.log("uploadedFiles:", uploadedFiles);
+    // console.log("uploadedFiles:", uploadedFiles);
 
     const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 

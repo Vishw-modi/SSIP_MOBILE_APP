@@ -7,7 +7,7 @@ import {
   Pressable,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { useUser } from "@clerk/clerk-expo";
+import { useAuth, useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import { spacing, typography, radii, shadows } from "@/design/styles";
 import { useTheme } from "../../../../context/theme-context";
@@ -25,6 +25,7 @@ export default function ProfileScreen() {
   const { user } = useUser();
   const router = useRouter();
   const { palette } = useTheme(); // Add theme hook
+  const { signOut } = useAuth();
 
   const [userDetails, setUserDetails] = useState({
     age: "",
@@ -214,9 +215,14 @@ export default function ProfileScreen() {
       {/* Header with Settings */}
       <View style={styles.header}>
         <Text style={dynamicStyles.headerTitle}>Profile</Text>
-        <Pressable style={styles.settingsButton} onPress={navigateToSettings}>
-          <Ionicons name="settings-outline" size={24} color={palette.text} />
-        </Pressable>
+        <View style={{ flexDirection: "row", gap: spacing.md }}>
+          <Pressable style={styles.settingsButton} onPress={navigateToSettings}>
+            <Ionicons name="settings-outline" size={24} color={palette.text} />
+          </Pressable>
+          <Pressable style={styles.settingsButton} onPress={() => signOut()}>
+            <Ionicons name="log-out" size={24} color={palette.text} />
+          </Pressable>
+        </View>
       </View>
 
       {/* Profile Info Section */}

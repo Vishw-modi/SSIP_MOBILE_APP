@@ -411,8 +411,6 @@ export default function ChatBotScreen() {
   );
 }
 
-const BLUE = "#6EA8FE";
-
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: "#F5F7FB" },
 
@@ -475,7 +473,7 @@ const styles = StyleSheet.create({
   },
 
   userBubble: {
-    backgroundColor: BLUE,
+    backgroundColor: "#6EA8FE",
     borderBottomRightRadius: 8,
     shadowColor: "#000",
     shadowOpacity: 0.04,

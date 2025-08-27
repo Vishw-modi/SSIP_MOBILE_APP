@@ -39,7 +39,7 @@ export default function PwReset() {
         password,
       });
       alert("Password reset successfully");
-      router.replace("/(auth)/sign-in");
+      router.replace("/(public)/sign-in");
       // await setActive!({ session: result.createdSessionId }); don't do this here
     } catch (err: any) {
       alert(err.message);
@@ -109,7 +109,7 @@ export default function PwReset() {
             {/* Back to Sign-in */}
             <View style={styles.switchRow}>
               <Text style={styles.switchText}>Remembered your password? </Text>
-              <Link href="/(auth)/sign-in" style={styles.switchLink}>
+              <Link href="/(public)/sign-in" style={styles.switchLink}>
                 Sign In
               </Link>
             </View>
