@@ -7,12 +7,21 @@ dotenv.config();
 
 export const generateReport = async (req, res) => {
   try {
-    const data = req.body;
+    let payload = null;
+    if (req.body.payload) {
+      payload =
+        typeof req.body.payload === "string"
+          ? req.body.payload
+          : JSON.stringify(req.body.payload);
+    }
 
-    if (!data) {
+    if (!payload) {
       return res.status(400).json({ error: "Missing 'data' in request body." });
     }
     // console.log("The data that came from the front end:", data);
+
+    const uploadedFiles = req.files || [];
+    console.log("uploadedFiles:", uploadedFiles);
 
     const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 
@@ -20,13 +29,23 @@ export const generateReport = async (req, res) => {
       model: "gemini-2.5-flash",
     });
 
-    const finalPrompt = `${reportPrompt}\n\nUser Data: ${JSON.stringify(data)}`;
+    const finalPrompt = `${reportPrompt}\n\nUser Data: ${JSON.stringify(
+      payload
+    )}`;
 
     const result = await model.generateContent({
       contents: [
         {
           role: "user",
-          parts: [{ text: finalPrompt }],
+          parts: [
+            { text: finalPrompt },
+            ...uploadedFiles.map((file) => ({
+              inlineData: {
+                data: file.buffer.toString("base64"),
+                mimeType: file.mimetype,
+              },
+            })),
+          ],
         },
       ],
       generationConfig: {
@@ -42,6 +61,7 @@ export const generateReport = async (req, res) => {
 
     const parsedReply = JSON.parse(rawReply);
     // console.log("parsedReply:", parsedReply);
+    console.log("Report generated successfully");
 
     res.status(200).json(parsedReply);
   } catch (e) {

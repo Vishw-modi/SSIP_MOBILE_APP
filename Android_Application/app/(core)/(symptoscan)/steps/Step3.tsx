@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   View,
   Text,
@@ -7,39 +7,62 @@ import {
   Pressable,
   TextInput,
   type LayoutChangeEvent,
+  PanResponder,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { MotiView } from "moti";
-import { Easing } from "react-native-reanimated";
+import Animated, {
+  Easing,
+  runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+} from "react-native-reanimated";
 import { useSymptoms } from "../../../../context/symptom-context";
 import { DIET_OPTIONS, EXERCISE_OPTIONS, SLEEP_OPTIONS } from "./data/options";
+<<<<<<< HEAD
 import { palette } from "@/design/styles";
+=======
+import { palette } from "@/design/tokens";
+import { Dropdown } from "@/ui/dropdown";
+>>>>>>> 6f11184c4642a2ab094d2d6a01e6449e0f96d43f
 
 export default function Lifestyle() {
   const router = useRouter();
   const { lifestyle, updateLifestyle, demographics, updateDemographics } =
     useSymptoms();
+  // slider state
+  const SENSITIVITY = 1;
+  const trackWidth = useRef(0);
+  const knobX = useSharedValue(0);
+  const knobStart = useRef(0);
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
 
-  // Simple slider measurements
-  const trackWidth = useRef(1);
-  const [dragX, setDragX] = useState<number | null>(null);
+      onPanResponderGrant: () => {
+        knobStart.current = knobX.value; // save starting knob pos
+      },
 
-  const setStressByX = (x: number) => {
-    const val = Math.max(0, Math.min(1, x / trackWidth.current));
-    updateLifestyle("stress", Math.round(val * 100));
-  };
+      onPanResponderMove: (_, gesture) => {
+        if (!trackWidth.current) return;
 
-  const onTrackLayout = (e: LayoutChangeEvent) => {
-    trackWidth.current = e.nativeEvent.layout.width;
-  };
+        // add relative dx to starting knob pos
+        const newX = knobStart.current + gesture.dx * SENSITIVITY;
 
-  const knobLeft = `${lifestyle.stress}%`;
+        const clamped = Math.max(0, Math.min(trackWidth.current, newX));
+        knobX.value = clamped;
 
-  const cycle = (arr: string[], current: string | null) => {
-    if (!current) return arr[0];
-    const idx = arr.findIndex((x) => x === current);
-    return arr[(idx + 1) % arr.length];
-  };
+        const percent = Math.round((clamped / trackWidth.current) * 100);
+        runOnJS(updateLifestyle)("stress", percent);
+      },
+    })
+  ).current;
+
+  // animated knob style
+  const knobStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: knobX.value - 10 }], // 10 = half knob size
+  }));
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -73,64 +96,42 @@ export default function Lifestyle() {
         <View style={styles.grid2}>
           <View style={{ flex: 1 }}>
             <Text style={styles.label}>Exercise Frequency</Text>
-            <Pressable
-              onPress={() =>
-                updateLifestyle(
-                  "exerciseFrequency",
-                  cycle(EXERCISE_OPTIONS, lifestyle.exerciseFrequency)
-                )
+            <Dropdown
+              data={EXERCISE_OPTIONS}
+              placeholder="Select exercise frequency"
+              value={lifestyle.exerciseFrequency}
+              onSelect={(item) =>
+                updateLifestyle("exerciseFrequency", item.value as string)
               }
-              style={({ pressed }) => [
-                styles.selector,
-                pressed && { opacity: 0.9 },
-              ]}
-            >
-              <Text style={styles.selectorText}>
-                {lifestyle.exerciseFrequency ?? "Select exercise frequency"}
-              </Text>
-              <Text style={styles.selectorChevron}>▾</Text>
-            </Pressable>
+              searchable
+            />
           </View>
           <View style={{ flex: 1 }}>
             <Text style={styles.label}>Sleep Quality</Text>
-            <Pressable
-              onPress={() =>
-                updateLifestyle(
-                  "sleepQuality",
-                  cycle(SLEEP_OPTIONS, lifestyle.sleepQuality)
-                )
+
+            <Dropdown
+              data={SLEEP_OPTIONS}
+              placeholder="Select sleep quality"
+              value={lifestyle.sleepQuality}
+              onSelect={(item) =>
+                updateLifestyle("sleepQuality", item.value as string)
               }
-              style={({ pressed }) => [
-                styles.selector,
-                pressed && { opacity: 0.9 },
-              ]}
-            >
-              <Text style={styles.selectorText}>
-                {lifestyle.sleepQuality ?? "Select sleep quality"}
-              </Text>
-              <Text style={styles.selectorChevron}>▾</Text>
-            </Pressable>
+              searchable
+            />
           </View>
         </View>
 
-        <View style={{ marginTop: 20 }}>
+        <View>
           <Text style={styles.label}>Stress Level</Text>
           <View
             style={styles.track}
-            onLayout={onTrackLayout}
-            onStartShouldSetResponder={() => true}
-            onMoveShouldSetResponder={() => true}
-            onResponderGrant={(e) => {
-              setDragX(e.nativeEvent.locationX);
-              setStressByX(e.nativeEvent.locationX);
+            onLayout={(e) => {
+              trackWidth.current = e.nativeEvent.layout.width;
+              knobX.value = (lifestyle.stress / 100) * trackWidth.current;
             }}
-            onResponderMove={(e) => {
-              setDragX(e.nativeEvent.locationX);
-              setStressByX(e.nativeEvent.locationX);
-            }}
-            onResponderRelease={() => setDragX(null)}
+            {...panResponder.panHandlers}
           >
-            <View style={[styles.knob, { left: knobLeft }]} />
+            <Animated.View style={[styles.knob, knobStyle]} />
           </View>
           <View style={styles.trackLabels}>
             <Text style={styles.trackLabelText}>Low</Text>
@@ -141,20 +142,13 @@ export default function Lifestyle() {
 
         <View style={{ marginTop: 14 }}>
           <Text style={styles.label}>Diet</Text>
-          <Pressable
-            onPress={() =>
-              updateLifestyle("diet", cycle(DIET_OPTIONS, lifestyle.diet))
-            }
-            style={({ pressed }) => [
-              styles.selector,
-              pressed && { opacity: 0.9 },
-            ]}
-          >
-            <Text style={styles.selectorText}>
-              {lifestyle.diet ?? "Select a diet"}
-            </Text>
-            <Text style={styles.selectorChevron}>▾</Text>
-          </Pressable>
+          <Dropdown
+            data={DIET_OPTIONS}
+            placeholder="Select a diet"
+            value={lifestyle.diet}
+            onSelect={(item) => updateLifestyle("diet", item.value as string)}
+            searchable
+          />
         </View>
 
         <View style={{ marginTop: 12 }}>
@@ -212,7 +206,7 @@ export default function Lifestyle() {
               pressed && { opacity: 0.9 },
             ]}
           >
-            <Text style={styles.btnPrimaryText}>Analyze Symptoms</Text>
+            <Text style={styles.btnPrimaryText}>Review Details</Text>
           </Pressable>
         </View>
       </MotiView>
@@ -258,27 +252,24 @@ const styles = StyleSheet.create({
   selectorChevron: { color: "#6B7280", fontSize: 16, marginLeft: 12 },
   grid2: { flexDirection: "row", gap: 16, marginTop: 8 },
   track: {
-    height: 16,
-    backgroundColor: "#E5E7EB",
-    borderRadius: 999,
-    justifyContent: "center",
-    paddingHorizontal: 6,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#ddd",
+    marginVertical: 10,
   },
   knob: {
     position: "absolute",
     top: -6,
-    marginLeft: -10, // center the knob
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: "#6D28D9",
+    backgroundColor: "blue",
   },
   trackLabels: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 6,
   },
-  trackLabelText: { color: "#6B7280", fontSize: 12 },
+  trackLabelText: { fontSize: 12, color: "#333" },
   input: {
     borderWidth: 1,
     borderColor: "#E5E7EB",

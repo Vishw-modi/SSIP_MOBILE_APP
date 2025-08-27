@@ -52,23 +52,71 @@ export const ResponseSchema = {
   propertyOrdering: ["response", "question", "type"],
   required: ["response"],
 };
-
 export const reportPrompt = `
-You are a professional AI health assistant. 
-The user will provide their symptoms and basic health information. 
-Your job is to return a structured JSON object strictly following the given schema.
+You are an AI health assistant that analyzes a user's symptoms and produces a structured medical advisory report in JSON format.
 
-The response must:
-1. List possible health conditions based on the symptoms.
-2. Provide clear and concise health advice.
-3. State the urgency level (Low, Moderate, or High).
-4. Suggest next medical steps or health checks.
-5. Provide a diet plan with specific food recommendations that may help.
-6. Provide an exercise plan (types of exercises, duration, and frequency) that is safe and beneficial.
+### Output Requirements:
+- Your response **must strictly follow the JSON structure defined in ReportSchema** below.
+- Only output valid JSON. Do not include explanations, markdown, or extra text outside the JSON.
+- Fill all required fields with meaningful, contextually appropriate data.
+- If some optional fields (e.g., 'possibleDiseases', 'ayurvedicMedications', 'reportInsights') are not applicable, return an empty array or an empty string.
+- Each string should be **clear, concise, and user-friendly** (avoid medical jargon unless necessary).
+- Advice must be supportive, encouraging the user to consult a healthcare professional where relevant.
 
-Do not include any extra fields or explanations outside the schema.
-Always ensure the advice is safe and general — never replace professional medical consultation.
+---
 
+### Special Focus: Personalized Health Score
+- The **personalizedHealthScore (1–100)** is one of the most important fields.
+- It must be **realistically calculated** based on:
+  1. Severity of the user's reported symptoms.
+  2. Presence of lifestyle or health-related risk factors.
+  3. Urgency level of the condition (Low → higher score, High → lower score).
+  4. Insights from any uploaded health report.
+- Interpret the score as follows:
+  - **80–100** → Generally healthy / mild issues.
+  - **60–79** → Moderate issues / manageable with lifestyle changes.
+  - **40–59** → Significant health concerns, medical attention advisable.
+  - **1–39** → Severe condition, urgent medical care recommended.
+- Ensure the score **matches the overall advice and urgency**.  
+- Do not give unrealistically high or low scores without context.
+
+---
+
+### ReportSchema Definition:
+{
+  "possibleConditions": "ARRAY of possible health conditions related to the symptoms.",
+  "possibleDiseases": "ARRAY of diseases possibly associated with symptoms (may overlap with conditions).",
+  "advice": "STRING - personalized health advice based on symptoms and report submitted if any.",
+  "urgency": "STRING - must be one of: Low, Moderate, High.",
+  "riskFactors": "ARRAY of lifestyle or health-related risk factors.",
+  "doList": "ARRAY of positive actions user should take.",
+  "dontList": "ARRAY of actions user should avoid.",
+  "recommendedNextSteps": "ARRAY of concrete next steps (doctor visits, tests, tracking symptoms).",
+  "preventiveMeasures": "ARRAY of preventive measures to avoid recurrence or worsening.",
+  "dietRecommendations": {
+    "breakfast": "ARRAY of recommended breakfast options.",
+    "lunch": "ARRAY of recommended lunch options.",
+    "dinner": "ARRAY of recommended dinner options.",
+    "snacks": "ARRAY of healthy snack options."
+  },
+  "exercisePlan": "ARRAY of recommended exercises, with duration & frequency.",
+  "ayurvedicMedications": "ARRAY of optional herbal remedies (if applicable)(if not provide basic ayurvedic medications).",
+  "followUpActions": "ARRAY of follow-up actions (doctor check-ins, monitoring).",
+  "personalizedHealthScore": "NUMBER between 1 and 100, representing the overall healthiness of the user's current condition, lifestyle, and submitted report.",
+  "reportInsights": "STRING - additional insights or recommendations based only on the user's submitted report."
+}
+
+---
+
+### Instructions:
+1. Use the user's reported **symptoms, lifestyle, and risk factors** to populate the report.
+2. Keep 'possibleConditions' broader (e.g., Migraine, Sinusitis) and 'possibleDiseases' more specific (e.g., Chronic Migraine, Acute Sinus Infection).
+3. Always provide at least **3 recommendations** in diet, exercise, and preventive measures.
+4. Urgency must reflect severity (example: chest pain → High, mild headache → Low).
+5. Ensure "reportInsights" summarizes additional insights derived solely from the user's submitted report.
+6. Do not include contradictory advice.
+7. Pay **special attention** to "personalizedHealthScore": it must be aligned with urgency, risks, and lifestyle.
+8. Fill all required fields; use empty arrays or empty strings for optional fields if not applicable.
 `;
 
 export const ReportSchema = {
@@ -89,7 +137,7 @@ export const ReportSchema = {
     advice: {
       type: "STRING",
       description:
-        "Clear, concise health advice based on the user's provided symptoms and information.",
+        "Clear, concise health advice based on the user's provided symptoms and information and also based on the report submitted by the user if any.",
     },
     urgency: {
       type: "STRING",
@@ -173,6 +221,19 @@ export const ReportSchema = {
         "Recommended follow-up actions, such as doctor visits, lab tests, or regular monitoring.",
       items: { type: "STRING" },
     },
+    personalizedHealthScore: {
+      type: "NUMBER",
+      description:
+        "Personalized health score between 1 and 100, reflecting the overall healthiness of the user's condition and lifestyle and the report submited by the user if submitted.",
+      minimum: 1,
+      maximum: 100,
+    },
+    reportInsights: {
+      type: "ARRAY",
+      description:
+        "Additional insights or recommendations based on the report submited by the user not the other data of the user",
+      items: { type: "STRING" },
+    },
   },
   required: [
     "possibleConditions",
@@ -181,6 +242,7 @@ export const ReportSchema = {
     "recommendedNextSteps",
     "dietRecommendations",
     "exercisePlan",
+    "personalizedHealthScore",
   ],
   propertyOrdering: [
     "possibleConditions",
@@ -196,6 +258,8 @@ export const ReportSchema = {
     "exercisePlan",
     "ayurvedicMedications",
     "followUpActions",
+    "personalizedHealthScore",
+    "reportInsights",
   ],
 };
 
@@ -274,6 +338,26 @@ export const NutritionSchema = {
           type: "ARRAY",
           description: "List of notable vitamins found in the food.",
           items: { type: "STRING" },
+          nullable: true,
+        },
+        iron: {
+          type: "NUMBER",
+          description: "Iron in milligrams.",
+          nullable: true,
+        },
+        calcium: {
+          type: "NUMBER",
+          description: "Calcium in milligrams.",
+          nullable: true,
+        },
+        phosphorus: {
+          type: "NUMBER",
+          description: "Phosphorus in milligrams.",
+          nullable: true,
+        },
+        potassium: {
+          type: "NUMBER",
+          description: "Potassium in milligrams.",
           nullable: true,
         },
       },

@@ -8,6 +8,7 @@ import {
   StyleSheet,
   ScrollView,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { MotiView, MotiText } from "moti";
@@ -15,7 +16,9 @@ import {
   CaltrackProvider,
   useCaltrack,
 } from "../../../context/caltrack-context";
+
 import { BACKEND_URL } from "../../../src/chat/config";
+import { router } from "expo-router";
 
 interface NutritionResponse {
   calories: number;
@@ -31,6 +34,10 @@ interface NutritionResponse {
     sodium: number;
     sugar: number;
     vitamins: string[];
+    iron: number;
+    calcium: number;
+    potassium: number;
+    phosphorus: number;
   };
   suggestions: string[];
 }
@@ -50,21 +57,37 @@ function NutritionAnalyzer() {
   const [nutritionData, setNutritionData] =
     React.useState<NutritionResponse | null>(null);
   const [hasUploaded, setHasUploaded] = useState(false);
-
   const pickImage = async () => {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permission.granted) {
-      alert("Permission denied!");
-      return;
-    }
-    const result = await ImagePicker.launchImageLibraryAsync({
-      base64: true,
-    });
-    if (!result.canceled && result.assets?.length) {
-      setPhoto(result.assets[0]);
-    }
+    Alert.alert(
+      "Select Image",
+      "Choose an option",
+      [
+        {
+          text: "Choose from Gallery",
+          onPress: async () => {
+            const permission =
+              await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (!permission.granted) {
+              alert("Permission denied!");
+              return;
+            }
+            const result = await ImagePicker.launchImageLibraryAsync({
+              base64: true,
+            });
+            if (!result.canceled && result.assets?.length) {
+              setPhoto(result.assets[0]);
+            }
+          },
+        },
+        {
+          text: "Take Photo",
+          onPress: () => router.push("/(core)/(caltrack)/CamaraScreen"), // navigates to your camera screen
+        },
+        { text: "Cancel", style: "cancel" },
+      ],
+      { cancelable: true }
+    );
   };
-
   const analyzeNutrition = async () => {
     if (!photo) {
       alert("Please select an image first");
@@ -285,17 +308,32 @@ function NutritionAnalyzer() {
             style={styles.microContainer}
           >
             <Text style={styles.sectionTitle}>Micronutrients</Text>
+
+            <View style={styles.microGrid}>
+              <Text style={styles.microText}>
+                Fiber: {nutritionData.micronutrients.fiber ?? "N/A"}g
+              </Text>
+              <Text style={styles.microText}>
+                Sodium: {nutritionData.micronutrients.sodium ?? "N/A"}mg
+              </Text>
+              <Text style={styles.microText}>
+                Sugar: {nutritionData.micronutrients.sugar ?? "N/A"}g
+              </Text>
+              <Text style={styles.microText}>
+                Calcium: {nutritionData.micronutrients.calcium ?? "N/A"}mg
+              </Text>
+              <Text style={styles.microText}>
+                Iron: {nutritionData.micronutrients.iron ?? "N/A"}mg
+              </Text>
+              <Text style={styles.microText}>
+                Phosphorus: {nutritionData.micronutrients.phosphorus ?? "N/A"}mg
+              </Text>
+              <Text style={styles.microText}>
+                Potassium: {nutritionData.micronutrients.potassium ?? "N/A"}mg
+              </Text>
+            </View>
+
             <Text style={styles.microText}>
-              Fiber: {nutritionData.micronutrients.fiber}g
-            </Text>
-            <Text style={styles.microText}>
-              Sodium: {nutritionData.micronutrients.sodium}mg
-            </Text>
-            <Text style={styles.microText}>
-              Sugar: {nutritionData.micronutrients.sugar}g
-            </Text>
-            <Text style={styles.microText}>
-              Vitamins:{" "}
               {nutritionData.micronutrients.vitamins?.length
                 ? nutritionData.micronutrients.vitamins.join(", ")
                 : "N/A"}
@@ -358,11 +396,7 @@ function NutritionAnalyzer() {
 }
 
 export default function Caltrack() {
-  return (
-    <CaltrackProvider>
-      <NutritionAnalyzer />
-    </CaltrackProvider>
-  );
+  return <NutritionAnalyzer />;
 }
 
 const styles = StyleSheet.create({
@@ -370,6 +404,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: "#f8f9fa",
+    marginBottom: 20,
   },
   title: {
     fontSize: 24,
@@ -420,15 +455,9 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   nutritionCard: {
-    // backgroundColor: "#fff",
     borderRadius: 16,
     padding: 10,
     marginTop: 20,
-    // shadowColor: "#000",
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.1,
-    // shadowRadius: 8,
-    // elevation: 4,
   },
   foodName: {
     fontSize: 22,
@@ -472,12 +501,27 @@ const styles = StyleSheet.create({
   },
   microContainer: {
     marginBottom: 20,
+    padding: 12,
+    backgroundColor: "#f8f9fa",
+    borderRadius: 10,
   },
+
+  microGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    marginTop: 8,
+    marginBottom: 8,
+  },
+
   microText: {
-    fontSize: 14,
-    color: "#7f8c8d",
-    marginBottom: 4,
+    width: "48%", // two-column layout
+    fontSize: 13,
+    marginBottom: 6,
+    color: "#2c3e50",
+    fontWeight: "500",
   },
+
   assessmentContainer: {
     backgroundColor: "#fff3cd",
     borderRadius: 8,
