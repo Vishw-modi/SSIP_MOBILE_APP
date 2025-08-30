@@ -79,6 +79,7 @@ You are an AI health assistant that analyzes a user's symptoms and produces a st
   - **1–39** → Severe condition, urgent medical care recommended.
 - Ensure the score **matches the overall advice and urgency**.  
 - Do not give unrealistically high or low scores without context.
+- Always provide a **concise and clear summary** of the user's condition and recommendations, even if the score is low.
 
 ---
 
@@ -104,6 +105,7 @@ You are an AI health assistant that analyzes a user's symptoms and produces a st
   "followUpActions": "ARRAY of follow-up actions (doctor check-ins, monitoring).",
   "personalizedHealthScore": "NUMBER between 1 and 100, representing the overall healthiness of the user's current condition, lifestyle, and submitted report.",
   "reportInsights": "STRING - additional insights or recommendations based only on the user's submitted report."
+  "summary": "ARRAY of summary of the report."
 }
 
 ---
@@ -234,6 +236,11 @@ export const ReportSchema = {
         "Additional insights or recommendations based on the report submited by the user not the other data of the user",
       items: { type: "STRING" },
     },
+    summary: {
+      type: "ARRAY",
+      description: "Summary of the report.",
+      items: { type: "STRING" },
+    },
   },
   required: [
     "possibleConditions",
@@ -243,6 +250,7 @@ export const ReportSchema = {
     "dietRecommendations",
     "exercisePlan",
     "personalizedHealthScore",
+    "summary",
   ],
   propertyOrdering: [
     "possibleConditions",
@@ -260,6 +268,7 @@ export const ReportSchema = {
     "followUpActions",
     "personalizedHealthScore",
     "reportInsights",
+    "summary",
   ],
 };
 

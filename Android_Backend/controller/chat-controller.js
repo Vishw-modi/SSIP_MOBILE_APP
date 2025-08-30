@@ -11,6 +11,8 @@ const responseSchema = ResponseSchema;
 
 export const handleChat = async (req, res) => {
   try {
+    console.log("message recieved");
+
     const { messages } = req.body;
     if (!messages) {
       return res.status(400).json({ error: "Provide { messages }" });

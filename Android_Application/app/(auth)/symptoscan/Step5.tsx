@@ -15,6 +15,7 @@ import { MotiView } from "moti";
 import type { AnalysisResult } from "./Step4";
 
 import { router } from "expo-router";
+import { handleDownloadReport } from "./DownloadPdf";
 // Updated interface to match the backend data structure
 
 const Step5 = ({ analysisResult }: { analysisResult: AnalysisResult }) => {
@@ -338,6 +339,19 @@ const Step5 = ({ analysisResult }: { analysisResult: AnalysisResult }) => {
                 )
               )}
             </ExpandableSection>
+            <ExpandableSection
+              title="Summary"
+              icon="checkmark-circle-outline"
+              sectionKey="summary"
+              iconColor="#06B6D4"
+            >
+              {(analysisResult.summary || []).map((measure, index) => (
+                <View key={index} style={styles.actionItem}>
+                  <Ionicons name="shield-checkmark" size={16} color="#06B6D4" />
+                  <Text style={styles.actionText}>{measure}</Text>
+                </View>
+              ))}
+            </ExpandableSection>
           </MotiView>
         )}
         {activeTab === "Details" && (
@@ -537,7 +551,12 @@ const Step5 = ({ analysisResult }: { analysisResult: AnalysisResult }) => {
         )}
 
         {/* Download Button */}
-        <TouchableOpacity style={styles.downloadButton}>
+        <TouchableOpacity
+          style={styles.downloadButton}
+          onPress={() => {
+            handleDownloadReport(analysisResult);
+          }}
+        >
           <Ionicons name="download-outline" size={20} color="#FFFFFF" />
           <Text style={styles.downloadButtonText}>
             Download Overview Report

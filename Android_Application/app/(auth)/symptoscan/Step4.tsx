@@ -12,11 +12,11 @@ import { MotiView } from "moti";
 import { Easing } from "react-native-reanimated";
 import { useRouter } from "expo-router";
 import * as DocumentPicker from "expo-document-picker";
+
 import { useSymptoms } from "@/context/symptom-context";
-import { Progress } from "@/components/Progress";
+// import { Progress } from "@/components/Progress";
 import { BACKEND_URL } from "@/chat/config";
 import Step5 from "./Step5";
-import { palette } from "@/design/styles";
 import Toast from "react-native-toast-message";
 
 export type AnalysisResult = {
@@ -40,6 +40,7 @@ export type AnalysisResult = {
   ayurvedicMedications: string[];
   personalizedHealthScore: number;
   reportInsights: string[];
+  summary: string[];
 };
 
 const Step4 = () => {
@@ -56,6 +57,7 @@ const Step4 = () => {
       name: string;
       uri: string;
       mimeType?: string;
+      size?: number;
     }[]
   >([]);
 
@@ -120,19 +122,10 @@ const Step4 = () => {
         }));
 
         setReportFile((prev) => {
-          let updated = [...prev];
+          const updated = [...prev];
 
           newFile.forEach((file) => {
             if (!file.size || file.size > 20 * 1024 * 1024) {
-              Toast.show({
-                type: "error",
-                text1: `File ${file.name} exceeds 20 MB limit`,
-                position: "bottom",
-                visibilityTime: 2000,
-              });
-              return;
-            }
-            if (file.size > 20 * 1024 * 1024) {
               Toast.show({
                 type: "error",
                 text1: `File ${file.name} exceeds 20 MB limit`,
@@ -228,12 +221,12 @@ const Step4 = () => {
 
   if (isAnalyzing) {
     return (
-      <MotiView
-        from={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        style={styles.container}
-      >
-        <View style={styles.loadingContainer}>
+      <View style={styles.loadingOverlay}>
+        <MotiView
+          from={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          style={styles.loadingContent}
+        >
           <MotiView
             from={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -260,8 +253,8 @@ const Step4 = () => {
               This may take a few moments
             </Text>
           </MotiView>
-        </View>
-      </MotiView>
+        </MotiView>
+      </View>
     );
   }
 
@@ -270,32 +263,31 @@ const Step4 = () => {
   }
 
   return (
-    <MotiView
-      from={{ opacity: 0, translateY: 20 }}
-      animate={{ opacity: 1, translateY: 0 }}
-      transition={{
-        type: "timing",
-        duration: 400,
-        easing: Easing.out(Easing.cubic),
-      }}
-      style={styles.container}
+    <ScrollView
+      contentContainerStyle={styles.container}
+      showsVerticalScrollIndicator={false}
     >
-      <Progress step={4} total={4} />
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
+      <MotiView
+        from={{ opacity: 0, translateY: 12, scale: 0.98 }}
+        animate={{ opacity: 1, translateY: 0, scale: 1 }}
+        transition={{
+          type: "timing",
+          duration: 450,
+          easing: Easing.out(Easing.cubic),
+        }}
+        style={styles.card}
       >
-        <MotiView
-          from={{ translateY: 10, opacity: 0 }}
-          animate={{ translateY: 0, opacity: 1 }}
-          transition={{ delay: 100 }}
-        >
-          <Text style={styles.title}>Review & Analyze</Text>
-          <Text style={styles.subtitle}>
-            Review your information below, then tap &apos;Analyze Symptoms&apos;
-            for personalized insights.
-          </Text>
-        </MotiView>
+        <Text style={styles.title}>SymptomScan Pro</Text>
+        <Text style={styles.lead}>
+          Review your information below, then tap &apos;Analyze Symptoms&apos;
+          for personalized insights.
+        </Text>
+
+        <View style={styles.progressWrap}>
+          <View style={styles.progressTrack} />
+          <View style={styles.progressBar} />
+          <Text style={styles.progressText}>Progress Step 4 of 4</Text>
+        </View>
 
         {/* Selected Symptoms Summary */}
         <MotiView
@@ -305,16 +297,13 @@ const Step4 = () => {
           style={styles.section}
         >
           <View style={styles.sectionHeader}>
-            <View style={styles.sectionIconContainer}>
-              <Text style={styles.sectionIcon}>🩺</Text>
-            </View>
-            <View style={styles.sectionTitleContainer}>
-              <Text style={styles.sectionTitle}>Selected Symptoms</Text>
-              <Text style={styles.sectionCount}>
-                ({selectedSymptoms.length}/7)
-              </Text>
-            </View>
+            <Text style={styles.sectionIcon}>🩺</Text>
+            <Text style={styles.sectionTitle}>Selected Symptoms</Text>
+            <Text style={styles.sectionCount}>
+              ({selectedSymptoms.length}/7)
+            </Text>
           </View>
+
           <View style={styles.pillContainer}>
             {selectedSymptoms.map((symptom, index) => (
               <MotiView
@@ -333,6 +322,7 @@ const Step4 = () => {
               </MotiView>
             ))}
           </View>
+
           {getAffectedAreas().length > 0 && (
             <View style={styles.affectedAreasContainer}>
               <Text style={styles.affectedAreasLabel}>Affected areas:</Text>
@@ -351,28 +341,25 @@ const Step4 = () => {
           style={styles.section}
         >
           <View style={styles.sectionHeader}>
-            <View style={styles.sectionIconContainer}>
-              <Text style={styles.sectionIcon}>👤</Text>
-            </View>
-            <View style={styles.sectionTitleContainer}>
-              <Text style={styles.sectionTitle}>Demographics</Text>
-            </View>
+            <Text style={styles.sectionIcon}>👤</Text>
+            <Text style={styles.sectionTitle}>Demographics</Text>
           </View>
+
           <View style={styles.summaryGrid}>
             {demographics.age && (
-              <View style={styles.summaryItemContainer}>
+              <View style={styles.summaryItem}>
                 <Text style={styles.summaryLabel}>Age</Text>
                 <Text style={styles.summaryValue}>{demographics.age}</Text>
               </View>
             )}
             {demographics.gender && (
-              <View style={styles.summaryItemContainer}>
+              <View style={styles.summaryItem}>
                 <Text style={styles.summaryLabel}>Gender</Text>
                 <Text style={styles.summaryValue}>{demographics.gender}</Text>
               </View>
             )}
             {demographics.heightCm && demographics.weightKg && (
-              <View style={styles.summaryItemContainer}>
+              <View style={styles.summaryItem}>
                 <Text style={styles.summaryLabel}>BMI</Text>
                 <Text style={styles.summaryValue}>
                   {(
@@ -383,7 +370,7 @@ const Step4 = () => {
               </View>
             )}
             {demographics.conditions.length > 0 && (
-              <View style={[styles.summaryItemContainer, styles.fullWidth]}>
+              <View style={[styles.summaryItem, styles.fullWidth]}>
                 <Text style={styles.summaryLabel}>Conditions</Text>
                 <Text style={styles.summaryValue}>
                   {demographics.conditions.join(", ")}
@@ -401,16 +388,13 @@ const Step4 = () => {
           style={styles.section}
         >
           <View style={styles.sectionHeader}>
-            <View style={styles.sectionIconContainer}>
-              <Text style={styles.sectionIcon}>🏃‍♂️</Text>
-            </View>
-            <View style={styles.sectionTitleContainer}>
-              <Text style={styles.sectionTitle}>Lifestyle</Text>
-            </View>
+            <Text style={styles.sectionIcon}>🏃‍♂️</Text>
+            <Text style={styles.sectionTitle}>Lifestyle</Text>
           </View>
+
           <View style={styles.summaryGrid}>
             {lifestyle.exerciseFrequency && (
-              <View style={styles.summaryItemContainer}>
+              <View style={styles.summaryItem}>
                 <Text style={styles.summaryLabel}>Exercise</Text>
                 <Text style={styles.summaryValue}>
                   {lifestyle.exerciseFrequency}
@@ -418,19 +402,19 @@ const Step4 = () => {
               </View>
             )}
             {lifestyle.sleepQuality && (
-              <View style={styles.summaryItemContainer}>
+              <View style={styles.summaryItem}>
                 <Text style={styles.summaryLabel}>Sleep</Text>
                 <Text style={styles.summaryValue}>
                   {lifestyle.sleepQuality}
                 </Text>
               </View>
             )}
-            <View style={styles.summaryItemContainer}>
+            <View style={styles.summaryItem}>
               <Text style={styles.summaryLabel}>Stress Level</Text>
               <Text style={styles.summaryValue}>{lifestyle.stress}/100</Text>
             </View>
             {lifestyle.diet && (
-              <View style={styles.summaryItemContainer}>
+              <View style={styles.summaryItem}>
                 <Text style={styles.summaryLabel}>Diet</Text>
                 <Text style={styles.summaryValue}>{lifestyle.diet}</Text>
               </View>
@@ -438,6 +422,7 @@ const Step4 = () => {
           </View>
         </MotiView>
 
+        {/* Medical Report Upload */}
         <MotiView
           from={{ translateX: 20, opacity: 0 }}
           animate={{ translateX: 0, opacity: 1 }}
@@ -445,32 +430,19 @@ const Step4 = () => {
           style={styles.section}
         >
           <View style={styles.sectionHeader}>
-            <View style={styles.sectionIconContainer}>
-              <Text style={styles.sectionIcon}>📑</Text>
-            </View>
-            <View style={styles.sectionTitleContainer}>
-              <Text style={styles.sectionTitle}>Upload Medical Report</Text>
-            </View>
+            <Text style={styles.sectionIcon}>📑</Text>
+            <Text style={styles.sectionTitle}>Upload Medical Report</Text>
           </View>
-          <Text style={styles.summaryLabel}>Upload upto 3 Reports only</Text>
+
+          <Text style={styles.uploadSubtext}>Upload up to 3 reports only</Text>
 
           {reportFile.length > 0 ? (
-            <View style={{ marginTop: 8 }}>
+            <View style={styles.fileList}>
               <Text style={styles.summaryLabel}>Selected Files:</Text>
               {reportFile.map((file, index) => (
-                <View
-                  key={index}
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    paddingVertical: 6,
-                    borderBottomWidth: index !== reportFile.length - 1 ? 1 : 0,
-                    borderBottomColor: "#eee",
-                  }}
-                >
+                <View key={index} style={styles.fileItem}>
                   <Text
-                    style={[styles.summaryValue, { flex: 1 }]}
+                    style={styles.fileName}
                     numberOfLines={1}
                     ellipsizeMode="middle"
                   >
@@ -482,60 +454,43 @@ const Step4 = () => {
                         prev.filter((f) => f.uri !== file.uri)
                       )
                     }
-                    style={{
-                      marginLeft: 12,
-                      backgroundColor: "#f87171",
-                      paddingHorizontal: 10,
-                      paddingVertical: 4,
-                      borderRadius: 6,
-                    }}
+                    style={styles.removeButton}
                   >
-                    <Text style={{ color: "white", fontWeight: "600" }}>X</Text>
+                    <Text style={styles.removeButtonText}>×</Text>
                   </Pressable>
                 </View>
               ))}
 
               {reportFile.length < 3 && (
-                <Pressable
-                  style={[styles.secondaryButton, { marginTop: 12 }]}
-                  onPress={pickReport}
-                >
-                  <Text style={styles.secondaryButtonText}>
-                    Add Another File
+                <Pressable style={styles.addFileButton} onPress={pickReport}>
+                  <Text style={styles.addFileButtonText}>
+                    + Add Another File
                   </Text>
                 </Pressable>
               )}
             </View>
           ) : (
-            <Pressable style={styles.primaryButton} onPress={pickReport}>
-              <Text style={styles.primaryButtonText}>Select PDF or Image</Text>
+            <Pressable style={styles.uploadButton} onPress={pickReport}>
+              <Text style={styles.uploadButtonText}>Select PDF or Image</Text>
             </Pressable>
           )}
         </MotiView>
 
-        <MotiView
-          from={{ translateY: 20, opacity: 0 }}
-          animate={{ translateY: 0, opacity: 1 }}
-          transition={{ delay: 800 }}
-          style={styles.actions}
-        >
-          <Pressable
-            style={styles.secondaryButton}
-            onPress={() => router.back()}
-          >
-            <Text style={styles.secondaryButtonText}>← Back</Text>
+        <View style={styles.footer}>
+          <Pressable style={styles.btnGhost} onPress={() => router.back()}>
+            <Text style={styles.btnGhostText}>← Back</Text>
           </Pressable>
           <Pressable
-            style={styles.primaryButton}
+            style={styles.btnPrimary}
             onPress={() => {
               analyzeSymptoms();
             }}
           >
-            <Text style={styles.primaryButtonText}>Analyze Symptoms</Text>
+            <Text style={styles.btnPrimaryText}>Analyze Symptoms</Text>
           </Pressable>
-        </MotiView>
-      </ScrollView>
-    </MotiView>
+        </View>
+      </MotiView>
+    </ScrollView>
   );
 };
 
@@ -543,110 +498,117 @@ export default Step4;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    padding: 16,
+    paddingTop: 10,
     backgroundColor: "#f8fafc",
-    paddingHorizontal: 20,
-    paddingTop: 40,
   },
-  scrollView: {
-    flex: 1,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "800",
-    color: "#0f172a",
-    marginBottom: 8,
-    letterSpacing: -0.5,
-  },
-  subtitle: {
-    fontSize: 17,
-    color: "#64748b",
-    marginBottom: 32,
-    lineHeight: 24,
-    fontWeight: "400",
-  },
-  section: {
+  card: {
     backgroundColor: "white",
     borderRadius: 20,
-    padding: 20,
-    marginBottom: 20,
+    paddingVertical: 20,
+    paddingHorizontal: 16,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
     elevation: 2,
-    borderWidth: 1,
-    borderColor: "#f1f5f9",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "800",
+    color: "#0f172a",
+    marginBottom: 4,
+  },
+  lead: {
+    fontSize: 14.5,
+    color: "#64748b",
+    lineHeight: 20,
+    marginBottom: 16,
+  },
+  progressWrap: {
+    marginBottom: 16,
+  },
+  progressTrack: {
+    height: 6,
+    borderRadius: 999,
+    backgroundColor: "#e2e8f0",
+  },
+  progressBar: {
+    height: 6,
+    borderRadius: 999,
+    position: "absolute",
+    left: 0,
+    top: 0,
+    width: "100%",
+    backgroundColor: "#6366f1",
+  },
+  progressText: {
+    marginTop: 6,
+    fontSize: 12,
+    color: "#64748b",
+  },
+  section: {
+    marginBottom: 16,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f1f5f9",
   },
   sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 16,
-  },
-  sectionIconContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: "#f1f5f9",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
+    marginBottom: 12,
   },
   sectionIcon: {
-    fontSize: 20,
-  },
-  sectionTitleContainer: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
+    fontSize: 18,
+    marginRight: 8,
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: "700",
     color: "#0f172a",
+    flex: 1,
   },
   sectionCount: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "600",
     color: "#6366f1",
-    marginLeft: 8,
   },
   pillContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 10,
+    gap: 8,
   },
   symptomPill: {
     backgroundColor: "#eef2ff",
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 20,
-    borderWidth: 1.5,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    borderWidth: 1,
     borderColor: "#c7d2fe",
   },
   pillText: {
-    fontSize: 15,
+    fontSize: 13,
     color: "#4338ca",
     fontWeight: "600",
   },
   affectedAreasContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 16,
-    padding: 12,
+    marginTop: 12,
+    padding: 10,
     backgroundColor: "#f8fafc",
-    borderRadius: 12,
-    borderLeftWidth: 4,
+    borderRadius: 8,
+    borderLeftWidth: 3,
     borderLeftColor: "#6366f1",
   },
   affectedAreasLabel: {
-    fontSize: 14,
+    fontSize: 12,
     color: "#475569",
     fontWeight: "600",
-    marginRight: 8,
+    marginRight: 6,
   },
   affectedAreas: {
-    fontSize: 14,
+    fontSize: 12,
     color: "#64748b",
     flex: 1,
     fontStyle: "italic",
@@ -654,14 +616,14 @@ const styles = StyleSheet.create({
   summaryGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 12,
+    gap: 8,
   },
-  summaryItemContainer: {
+  summaryItem: {
     backgroundColor: "#f8fafc",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 12,
-    minWidth: "45%",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    minWidth: "30%",
     borderWidth: 1,
     borderColor: "#e2e8f0",
   },
@@ -669,22 +631,124 @@ const styles = StyleSheet.create({
     minWidth: "100%",
   },
   summaryLabel: {
-    fontSize: 13,
+    fontSize: 11,
     color: "#64748b",
     fontWeight: "600",
-    marginBottom: 4,
+    marginBottom: 2,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   summaryValue: {
-    fontSize: 16,
+    fontSize: 13,
     color: "#0f172a",
     fontWeight: "600",
   },
-  summaryItem: {
-    fontSize: 15,
-    color: "#374151",
-    lineHeight: 20,
+  uploadSubtext: {
+    fontSize: 12,
+    color: "#64748b",
+    marginBottom: 12,
+  },
+  fileList: {
+    marginTop: 8,
+  },
+  fileItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: "#f8fafc",
+    borderRadius: 8,
+    marginBottom: 6,
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+  },
+  fileName: {
+    flex: 1,
+    fontSize: 13,
+    color: "#0f172a",
+    fontWeight: "500",
+  },
+  removeButton: {
+    marginLeft: 8,
+    backgroundColor: "#f87171",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
+  removeButtonText: {
+    color: "white",
+    fontWeight: "600",
+    fontSize: 14,
+  },
+  addFileButton: {
+    backgroundColor: "#f1f5f9",
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+    borderStyle: "dashed",
+  },
+  addFileButtonText: {
+    color: "#6366f1",
+    fontSize: 13,
+    fontWeight: "600",
+  },
+  uploadButton: {
+    backgroundColor: "#6366f1",
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  uploadButtonText: {
+    color: "white",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  footer: {
+    marginTop: 16,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  btnGhost: {
+    backgroundColor: "#f1f5f9",
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 10,
+    flex: 1,
+    alignItems: "center",
+  },
+  btnGhostText: {
+    fontWeight: "700",
+    color: "#475569",
+    fontSize: 14,
+  },
+  btnPrimary: {
+    backgroundColor: "#6366f1",
+    borderRadius: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    flex: 1,
+    alignItems: "center",
+  },
+  btnPrimaryText: {
+    fontWeight: "700",
+    color: "white",
+    fontSize: 14,
+  },
+  loadingOverlay: {
+    flex: 1,
+    backgroundColor: "#f8fafc",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingContent: {
+    alignItems: "center",
+    paddingHorizontal: 40,
   },
   loadingContainer: {
     flex: 1,
@@ -693,154 +757,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
   },
   loadingIconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     backgroundColor: "#eef2ff",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: 20,
   },
   loadingText: {
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: "700",
     color: "#0f172a",
     textAlign: "center",
-    marginBottom: 8,
+    marginBottom: 6,
   },
   loadingSubtext: {
-    fontSize: 16,
+    fontSize: 14,
     color: "#64748b",
     textAlign: "center",
     fontWeight: "500",
-  },
-  actions: {
-    flexDirection: "row",
-    gap: 16,
-    marginTop: 32,
-    marginBottom: 40,
-  },
-  primaryButton: {
-    flex: 1,
-    backgroundColor: palette.primary,
-    paddingVertical: 18,
-    borderRadius: 16,
-    alignItems: "center",
-    borderWidth: 2,
-    borderColor: palette.primary,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  primaryButtonText: {
-    color: "white",
-    fontSize: 17,
-    fontWeight: "700",
-    letterSpacing: 0.1,
-  },
-  secondaryButton: {
-    flex: 1,
-    backgroundColor: "white",
-    paddingVertical: 18,
-    borderRadius: 16,
-    alignItems: "center",
-    borderWidth: 2,
-    borderColor: "#e2e8f0",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  secondaryButtonText: {
-    color: "#475569",
-    fontSize: 17,
-    fontWeight: "600",
-  },
-  urgencyBadge: {
-    alignSelf: "flex-start",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    marginBottom: 8,
-  },
-  urgencyLow: {
-    backgroundColor: "#dcfce7",
-  },
-  urgencyModerate: {
-    backgroundColor: "#fef3c7",
-  },
-  urgencyHigh: {
-    backgroundColor: "#fee2e2",
-  },
-  urgencyText: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: "#1a1a1a",
-  },
-  adviceText: {
-    fontSize: 15,
-    color: "#374151",
-    lineHeight: 22,
-    backgroundColor: "#f0f9ff",
-    padding: 12,
-    borderRadius: 8,
-    borderLeftWidth: 3,
-    borderLeftColor: "#0284c7",
-  },
-  listItem: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    marginBottom: 8,
-  },
-  bullet: {
-    fontSize: 16,
-    color: "#0284c7",
-    marginRight: 8,
-    marginTop: 2,
-  },
-  listText: {
-    flex: 1,
-    fontSize: 15,
-    color: "#374151",
-    lineHeight: 20,
-  },
-  guidanceText: {
-    fontSize: 15,
-    color: "#374151",
-    lineHeight: 22,
-  },
-  conditionItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    backgroundColor: "#f8fafc",
-    borderRadius: 8,
-    borderLeftWidth: 3,
-    borderLeftColor: "#0284c7",
-  },
-  conditionBadge: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: "#0284c7",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
-  },
-  conditionNumber: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: "white",
-  },
-  conditionText: {
-    flex: 1,
-    fontSize: 15,
-    fontWeight: "500",
-    color: "#1a1a1a",
   },
 });
