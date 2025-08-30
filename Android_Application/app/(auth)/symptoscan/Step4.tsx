@@ -14,7 +14,7 @@ import { useRouter } from "expo-router";
 import * as DocumentPicker from "expo-document-picker";
 
 import { useSymptoms } from "@/context/symptom-context";
-import { Progress } from "@/components/Progress";
+// import { Progress } from "@/components/Progress";
 import { BACKEND_URL } from "@/chat/config";
 import Step5 from "./Step5";
 import Toast from "react-native-toast-message";

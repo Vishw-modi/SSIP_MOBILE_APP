@@ -266,7 +266,7 @@ export default function Lifestyle() {
           </Pressable>
           <Pressable
             onPress={() => {
-              router.push("/(core)/(symptoscan)/steps/Step4");
+              router.push("/symptoscan/Step4");
             }}
             style={({ pressed }) => [
               styles.btnPrimary,
