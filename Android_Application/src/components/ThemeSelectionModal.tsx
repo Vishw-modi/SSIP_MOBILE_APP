@@ -8,7 +8,7 @@ import {
   BottomSheetBackdropProps,
 } from "@gorhom/bottom-sheet";
 import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "../../context/theme-context";
+import { useTheme } from "@/context/theme-context";
 import { spacing, typography, radii } from "@/design/styles";
 
 export const ThemeSelectionBottomSheet = forwardRef<BottomSheetModal>(

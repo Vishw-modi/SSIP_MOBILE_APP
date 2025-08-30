@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, type ViewProps } from "react-native";
 import { spacing, typography } from "@/design/styles";
-import { useTheme } from "../../context/theme-context";
+import { useTheme } from "@/context/theme-context";
 import { JSX } from "react";
 
 interface Props extends ViewProps {

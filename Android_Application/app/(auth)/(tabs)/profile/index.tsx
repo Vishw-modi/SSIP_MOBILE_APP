@@ -5,12 +5,14 @@ import {
   Text,
   View,
   Pressable,
+  Alert,
+  Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth, useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import { spacing, typography, radii, shadows } from "@/design/styles";
-import { useTheme } from "../../../../context/theme-context";
+import { useTheme } from "@/context/theme-context";
 import { NCard } from "@/ui/card";
 import { NButton } from "@/ui/button";
 import { useEffect, useState } from "react";
@@ -216,11 +218,37 @@ export default function ProfileScreen() {
       <View style={styles.header}>
         <Text style={dynamicStyles.headerTitle}>Profile</Text>
         <View style={{ flexDirection: "row", gap: spacing.md }}>
-          <Pressable style={styles.settingsButton} onPress={navigateToSettings}>
-            <Ionicons name="settings-outline" size={24} color={palette.text} />
-          </Pressable>
-          <Pressable style={styles.settingsButton} onPress={() => signOut()}>
+          <Pressable
+            style={({ pressed }) => [
+              styles.settingsButton,
+              pressed &&
+                Platform.select({ ios: { opacity: 0.7 }, default: {} }),
+            ]}
+            android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: true }}
+            onPress={() => {
+              Alert.alert("Log Out", "Are you sure you want to log out?", [
+                { text: "Cancel", style: "cancel" },
+                {
+                  text: "Log Out",
+                  style: "destructive",
+                  onPress: () => signOut(),
+                },
+              ]);
+            }}
+          >
             <Ionicons name="log-out" size={24} color={palette.text} />
+          </Pressable>
+
+          <Pressable
+            style={({ pressed }) => [
+              styles.settingsButton,
+              pressed &&
+                Platform.select({ ios: { opacity: 0.7 }, default: {} }),
+            ]}
+            android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: true }}
+            onPress={navigateToSettings}
+          >
+            <Ionicons name="settings-outline" size={24} color={palette.text} />
           </Pressable>
         </View>
       </View>

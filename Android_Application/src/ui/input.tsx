@@ -6,7 +6,7 @@ import {
   View,
 } from "react-native";
 import { radii, spacing, typography } from "@/design/styles";
-import { useTheme } from "../../context/theme-context";
+import { useTheme } from "@/context/theme-context";
 import { JSX } from "react";
 
 interface NInputProps extends TextInputProps {
