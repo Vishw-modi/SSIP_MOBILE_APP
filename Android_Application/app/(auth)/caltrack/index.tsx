@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import {
   View,
@@ -39,6 +41,14 @@ interface NutritionResponse {
   suggestions: string[];
 }
 
+const COLORS = {
+  primary: "#007AFF", // brand blue
+  accent: "#34C759", // success green
+  bg: "#F8FAFC", // app background
+  card: "#FFFFFF", // surfaces/cards
+  text: "#1F2937", // slate-800
+};
+
 function NutritionAnalyzer() {
   const {
     userInput,
@@ -54,6 +64,22 @@ function NutritionAnalyzer() {
   const [nutritionData, setNutritionData] =
     React.useState<NutritionResponse | null>(null);
   const [hasUploaded, setHasUploaded] = useState(false);
+
+  const chooseFromGallery = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      alert("Permission denied!");
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      base64: true,
+      quality: 0.9,
+    });
+    if (!result.canceled && result.assets?.length) {
+      setPhoto(result.assets[0]);
+    }
+  };
+
   const pickImage = async () => {
     Alert.alert(
       "Select Image",
@@ -61,20 +87,7 @@ function NutritionAnalyzer() {
       [
         {
           text: "Choose from Gallery",
-          onPress: async () => {
-            const permission =
-              await ImagePicker.requestMediaLibraryPermissionsAsync();
-            if (!permission.granted) {
-              alert("Permission denied!");
-              return;
-            }
-            const result = await ImagePicker.launchImageLibraryAsync({
-              base64: true,
-            });
-            if (!result.canceled && result.assets?.length) {
-              setPhoto(result.assets[0]);
-            }
-          },
+          onPress: chooseFromGallery,
         },
         {
           text: "Take Photo",
@@ -85,6 +98,7 @@ function NutritionAnalyzer() {
       { cancelable: true }
     );
   };
+
   const analyzeNutrition = async () => {
     if (!photo) {
       alert("Please select an image first");
@@ -145,62 +159,111 @@ function NutritionAnalyzer() {
         from={{ opacity: 0, translateY: -20 }}
         animate={{ opacity: 1, translateY: 0 }}
         transition={{ type: "timing", duration: 800 }}
+        style={{ marginBottom: 8 }}
       >
         <Text style={styles.title}>Your Nutrition Analyzer</Text>
+        <Text style={styles.subtitle}>
+          Upload a clear photo of your meal or snap a new one. We’ll estimate
+          calories, macronutrients, micronutrients, and provide a quick health
+          assessment with suggestions.
+        </Text>
       </MotiView>
 
       <MotiView
-        from={{ opacity: 0, scale: 0.9 }}
+        from={{ opacity: 0, translateY: -8 }}
+        animate={{ opacity: 1, translateY: 0 }}
+        transition={{ type: "timing", duration: 500, delay: 150 }}
+        style={styles.helperBox}
+      >
+        <Text style={styles.helperItem}>
+          • Best results with one dish centered, in focus
+        </Text>
+        <Text style={styles.helperItem}>
+          • Good lighting and minimal clutter
+        </Text>
+        <Text style={styles.helperItem}>
+          • Optional notes like “no sauce” or “half portion”
+        </Text>
+      </MotiView>
+
+      <MotiView
+        from={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ type: "timing", duration: 600, delay: 200 }}
+        transition={{ type: "timing", duration: 400, delay: 200 }}
       >
         <TextInput
           style={styles.input}
-          placeholder="Enter additional instructions (optional)"
+          placeholder="Add notes or instructions (optional)"
           value={userInput}
           onChangeText={setUserInput}
+          placeholderTextColor="rgba(31,41,55,0.6)"
         />
       </MotiView>
 
       <MotiView
-        from={{ opacity: 0, translateX: -20 }}
-        animate={{ opacity: 1, translateX: 0 }}
-        transition={{ type: "timing", duration: 600, delay: 400 }}
+        from={{ opacity: 0, translateY: 10 }}
+        animate={{ opacity: 1, translateY: 0 }}
+        transition={{ type: "timing", duration: 500, delay: 250 }}
       >
         <TouchableOpacity
-          style={styles.button}
           onPress={pickImage}
           disabled={loading}
+          style={[styles.uploadCard, loading && { opacity: 0.7 }]}
+          accessibilityRole="button"
+          accessibilityLabel="Upload or change food photo"
         >
-          <Text
-            style={[
-              styles.buttonText,
-              loading && styles.pickImagedisabledButton,
-            ]}
-          >
-            {loading
-              ? "Can't pick image for now"
-              : photo
-              ? "Change Image"
-              : "Pick an Image"}
+          {photo ? (
+            <Image source={{ uri: photo.uri }} style={styles.uploadImage} />
+          ) : (
+            <View style={styles.uploadPlaceholder}>
+              <Text style={styles.uploadTitle}>Tap to upload a food photo</Text>
+              <Text style={styles.uploadCaption}>
+                JPG or PNG · Clear, well‑lit image
+              </Text>
+            </View>
+          )}
+        </TouchableOpacity>
+      </MotiView>
+
+      <MotiView
+        from={{ opacity: 0, translateY: 8 }}
+        animate={{ opacity: 1, translateY: 0 }}
+        transition={{ type: "timing", duration: 450, delay: 300 }}
+        style={styles.uploadRow}
+      >
+        <TouchableOpacity
+          style={[
+            styles.button,
+            styles.secondaryButton,
+            loading && styles.disabledButton,
+          ]}
+          onPress={chooseFromGallery}
+          disabled={loading}
+        >
+          <Text style={[styles.buttonText, styles.secondaryButtonText]}>
+            Choose from Gallery
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.button,
+            styles.secondaryButton,
+            loading && styles.disabledButton,
+          ]}
+          onPress={() => router.push("/caltrack/camerascreen")}
+          disabled={loading}
+        >
+          <Text style={[styles.buttonText, styles.secondaryButtonText]}>
+            Take Photo
           </Text>
         </TouchableOpacity>
       </MotiView>
 
-      {photo && (
-        <MotiView
-          from={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ type: "spring", damping: 15, stiffness: 150 }}
-        >
-          <Image source={{ uri: photo.uri }} style={styles.image} />
-        </MotiView>
-      )}
-
       <MotiView
-        from={{ opacity: 0, translateX: 20 }}
-        animate={{ opacity: 1, translateX: 0 }}
-        transition={{ type: "timing", duration: 600, delay: 600 }}
+        from={{ opacity: 0, translateY: 10 }}
+        animate={{ opacity: 1, translateY: 0 }}
+        transition={{ type: "timing", duration: 600, delay: 350 }}
       >
         <TouchableOpacity
           style={[
@@ -211,7 +274,7 @@ function NutritionAnalyzer() {
           onPress={analyzeNutrition}
           disabled={loading}
         >
-          <Text style={styles.buttonText}>
+          <Text style={styles.primaryButtonText}>
             {loading ? "Analyzing..." : "Analyze Nutrition"}
           </Text>
         </TouchableOpacity>
@@ -219,29 +282,31 @@ function NutritionAnalyzer() {
 
       {loading && (
         <MotiView
-          from={{ opacity: 0, scale: 0.5 }}
+          from={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ type: "spring", damping: 15 }}
         >
           <ActivityIndicator
             size="large"
-            color="#007AFF"
-            style={{ marginTop: 20 }}
+            color={COLORS.primary}
+            style={{ marginTop: 16 }}
           />
         </MotiView>
       )}
 
       {hasUploaded && (
         <MotiView
-          from={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ type: "spring", damping: 15 }}
+          from={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ type: "timing", duration: 300 }}
         >
           <Text style={styles.noDataText}>
-            Please Upload a Proper food Image
+            We couldn’t detect a recognizable dish. Try a clear, well‑lit photo
+            where the food fills most of the frame.
           </Text>
         </MotiView>
       )}
+
       {nutritionData && (
         <MotiView
           from={{ opacity: 0, translateY: 30 }}
@@ -252,25 +317,18 @@ function NutritionAnalyzer() {
           <MotiText
             from={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 500 }}
+            transition={{ delay: 200 }}
             style={styles.foodName}
           >
-            <MotiText
-              from={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 500 }}
-              style={styles.foodName}
-            >
-              {nutritionData.foodName
-                ? nutritionData.foodName
-                : nutritionData.healthAssessment}
-            </MotiText>
+            {nutritionData.foodName
+              ? nutritionData.foodName
+              : nutritionData.healthAssessment}
           </MotiText>
 
           <MotiView
-            from={{ opacity: 0, scale: 0.9 }}
+            from={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 600 }}
+            transition={{ delay: 280 }}
             style={styles.caloriesContainer}
           >
             <Text style={styles.caloriesText}>
@@ -281,7 +339,7 @@ function NutritionAnalyzer() {
           <MotiView
             from={{ opacity: 0, translateX: -20 }}
             animate={{ opacity: 1, translateX: 0 }}
-            transition={{ delay: 700 }}
+            transition={{ delay: 350 }}
             style={styles.macroContainer}
           >
             <Text style={styles.sectionTitle}>Macronutrients</Text>
@@ -301,7 +359,7 @@ function NutritionAnalyzer() {
           <MotiView
             from={{ opacity: 0, translateX: 20 }}
             animate={{ opacity: 1, translateX: 0 }}
-            transition={{ delay: 800 }}
+            transition={{ delay: 420 }}
             style={styles.microContainer}
           >
             <Text style={styles.sectionTitle}>Micronutrients</Text>
@@ -330,17 +388,17 @@ function NutritionAnalyzer() {
               </Text>
             </View>
 
-            <Text style={styles.microText}>
+            <Text style={styles.microVitamins}>
               {nutritionData.micronutrients.vitamins?.length
                 ? nutritionData.micronutrients.vitamins.join(", ")
-                : "N/A"}
+                : "Vitamins: N/A"}
             </Text>
           </MotiView>
 
           <MotiView
-            from={{ opacity: 0, translateY: 20 }}
+            from={{ opacity: 0, translateY: 16 }}
             animate={{ opacity: 1, translateY: 0 }}
-            transition={{ delay: 900 }}
+            transition={{ delay: 480 }}
             style={styles.assessmentContainer}
           >
             <Text style={styles.sectionTitle}>Health Assessment</Text>
@@ -352,9 +410,9 @@ function NutritionAnalyzer() {
           {nutritionData.suggestions &&
             nutritionData.suggestions.length > 0 && (
               <MotiView
-                from={{ opacity: 0, translateY: 20 }}
+                from={{ opacity: 0, translateY: 12 }}
                 animate={{ opacity: 1, translateY: 0 }}
-                transition={{ delay: 1000 }}
+                transition={{ delay: 520 }}
                 style={styles.suggestionsContainer}
               >
                 <Text style={styles.sectionTitle}>Suggestions</Text>
@@ -368,26 +426,16 @@ function NutritionAnalyzer() {
         </MotiView>
       )}
 
-      {responsePoints && responsePoints.length > 0 && !nutritionData && (
-        <MotiView
-          from={{ opacity: 0, translateY: 30 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ type: "timing", duration: 800, delay: 300 }}
-          style={styles.resultContainer}
-        >
-          {responsePoints.map((point, idx) => (
-            <MotiText
-              key={idx}
-              from={{ opacity: 0, translateX: -10 }}
-              animate={{ opacity: 1, translateX: 0 }}
-              transition={{ delay: idx * 100 + 400 }}
-              style={styles.resultText}
-            >
-              {point}
-            </MotiText>
-          ))}
-        </MotiView>
-      )}
+      <MotiView
+        from={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ type: "timing", duration: 300, delay: 200 }}
+      >
+        <Text style={styles.disclaimer}>
+          Estimates are generated from the photo and may vary. For personalized
+          medical or dietary advice, consult a professional.
+        </Text>
+      </MotiView>
     </ScrollView>
   );
 }
@@ -400,157 +448,239 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#f8f9fa",
+    backgroundColor: COLORS.bg,
     marginBottom: 20,
   },
   title: {
     fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-    textAlign: "center",
-    color: "#2c3e50",
+    fontWeight: "800",
+    marginBottom: 8,
+    textAlign: "left",
+    color: COLORS.text,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: "rgba(31,41,55,0.8)",
+    lineHeight: 20,
+    marginBottom: 8,
+  },
+  helperBox: {
+    backgroundColor: "rgba(0,122,255,0.06)", // primary tint
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 12,
+  },
+  helperItem: {
+    fontSize: 13,
+    color: COLORS.text,
+    marginBottom: 4,
   },
   input: {
     borderWidth: 1,
-    borderColor: "#e1e8ed",
-    padding: 15,
+    borderColor: "rgba(31,41,55,0.12)",
+    padding: 14,
     marginVertical: 10,
     borderRadius: 12,
-    backgroundColor: "#fff",
+    backgroundColor: COLORS.card,
     fontSize: 16,
+    color: COLORS.text,
   },
-  button: {
-    backgroundColor: "#007AFF",
-    padding: 15,
-    borderRadius: 12,
-    marginVertical: 8,
+  uploadCard: {
+    backgroundColor: COLORS.card,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+    borderStyle: "dashed",
+    overflow: "hidden",
+    minHeight: 180,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
+  },
+  uploadImage: {
+    width: "100%",
+    height: 220,
+  },
+  uploadPlaceholder: {
+    paddingVertical: 24,
+    paddingHorizontal: 12,
     alignItems: "center",
   },
+  uploadTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: COLORS.text,
+    marginBottom: 4,
+  },
+  uploadCaption: {
+    fontSize: 12,
+    color: "rgba(31,41,55,0.7)",
+  },
+  uploadRow: {
+    marginTop: 12,
+    flexDirection: "row",
+    gap: 12,
+  },
+  button: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  secondaryButton: {
+    backgroundColor: COLORS.card,
+    borderWidth: 1,
+    borderColor: "rgba(31,41,55,0.12)",
+  },
+  secondaryButtonText: {
+    color: COLORS.primary,
+    fontSize: 15,
+    fontWeight: "700",
+  },
   analyzeButton: {
-    backgroundColor: "#34c759",
+    backgroundColor: COLORS.accent,
+    marginTop: 12,
   },
   disabledButton: {
-    backgroundColor: "#a0a0a0",
+    opacity: 0.6,
   },
-  pickImagedisabledButton: {},
-  buttonText: {
+  primaryButtonText: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "800",
   },
   noDataText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#2c3e50",
-    textAlign: "center",
-    marginTop: 20,
-  },
-  image: {
-    width: "100%",
-    height: 200,
-    marginVertical: 15,
-    borderRadius: 12,
+    fontSize: 14,
+    fontWeight: "600",
+    color: COLORS.text,
+    textAlign: "left",
+    marginTop: 12,
   },
   nutritionCard: {
+    backgroundColor: COLORS.card,
     borderRadius: 16,
-    padding: 10,
-    marginTop: 20,
+    padding: 16,
+    marginTop: 16,
+    borderWidth: 1,
+    borderColor: "rgba(31,41,55,0.08)",
+    shadowColor: "#000",
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 3,
   },
   foodName: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "#2c3e50",
-    textAlign: "center",
-    marginBottom: 15,
+    fontSize: 20,
+    fontWeight: "800",
+    color: COLORS.text,
+    textAlign: "left",
+    marginBottom: 12,
   },
   caloriesContainer: {
-    backgroundColor: "#e8f5e8",
+    backgroundColor: "rgba(52,199,89,0.12)", // accent tint
     borderRadius: 12,
-    padding: 15,
-    marginBottom: 20,
+    padding: 14,
+    marginBottom: 16,
     alignItems: "center",
   },
   caloriesText: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#27ae60",
+    fontSize: 18,
+    fontWeight: "800",
+    color: COLORS.accent,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#2c3e50",
-    marginBottom: 10,
+    fontSize: 16,
+    fontWeight: "800",
+    color: COLORS.text,
+    marginBottom: 8,
   },
   macroContainer: {
-    marginBottom: 20,
+    marginBottom: 16,
   },
   macroRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    backgroundColor: "#f8f9fa",
-    borderRadius: 8,
+    backgroundColor: COLORS.bg,
+    borderRadius: 10,
     padding: 12,
   },
   macroText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#34495e",
+    fontSize: 13,
+    fontWeight: "700",
+    color: "rgba(31,41,55,0.9)",
   },
   microContainer: {
-    marginBottom: 20,
+    marginBottom: 16,
     padding: 12,
-    backgroundColor: "#f8f9fa",
-    borderRadius: 10,
+    backgroundColor: COLORS.bg,
+    borderRadius: 12,
   },
-
   microGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
-    marginTop: 8,
+    marginTop: 4,
     marginBottom: 8,
+    gap: 6,
   },
-
   microText: {
-    width: "48%", // two-column layout
-    fontSize: 13,
+    width: "48%",
+    fontSize: 12,
     marginBottom: 6,
-    color: "#2c3e50",
-    fontWeight: "500",
+    color: COLORS.text,
+    fontWeight: "600",
   },
-
+  microVitamins: {
+    fontSize: 12,
+    color: "rgba(31,41,55,0.85)",
+  },
   assessmentContainer: {
-    backgroundColor: "#fff3cd",
-    borderRadius: 8,
-    padding: 15,
-    marginBottom: 20,
+    backgroundColor: "rgba(31,41,55,0.04)",
+    borderRadius: 10,
+    padding: 12,
+    marginTop: 4,
+    marginBottom: 12,
   },
   assessmentText: {
-    fontSize: 14,
-    color: "#856404",
+    fontSize: 13,
+    color: "rgba(31,41,55,0.9)",
     lineHeight: 20,
   },
   suggestionsContainer: {
-    backgroundColor: "#e7f3ff",
-    borderRadius: 8,
-    padding: 15,
+    backgroundColor: "rgba(0,122,255,0.06)",
+    borderRadius: 10,
+    padding: 12,
   },
   suggestionText: {
-    fontSize: 14,
-    color: "#0c5aa6",
+    fontSize: 13,
+    color: COLORS.text,
     marginBottom: 6,
     lineHeight: 18,
   },
   resultContainer: {
-    marginTop: 20,
-    backgroundColor: "#fff",
+    marginTop: 16,
+    backgroundColor: COLORS.card,
     borderRadius: 12,
     padding: 15,
+    borderWidth: 1,
+    borderColor: "rgba(31,41,55,0.08)",
   },
   resultText: {
-    fontSize: 16,
+    fontSize: 15,
     marginBottom: 8,
-    color: "#2c3e50",
+    color: COLORS.text,
     lineHeight: 22,
+  },
+  disclaimer: {
+    fontSize: 12,
+    color: "rgba(31,41,55,0.7)",
+    marginTop: 18,
+    marginBottom: 8,
+    lineHeight: 18,
   },
 });

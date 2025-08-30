@@ -18,6 +18,7 @@ import { useSymptoms } from "@/context/symptom-context";
 import { BACKEND_URL } from "@/chat/config";
 import Step5 from "./Step5";
 import Toast from "react-native-toast-message";
+import { useResult } from "@/context/result-context";
 
 export type AnalysisResult = {
   possibleConditions: string[];
@@ -44,6 +45,7 @@ export type AnalysisResult = {
 };
 
 const Step4 = () => {
+  const { setResult } = useResult();
   const router = useRouter();
   const { selectedSymptoms, demographics, lifestyle, bodyAreas } =
     useSymptoms();
@@ -197,8 +199,13 @@ const Step4 = () => {
 
       const result = await response.json();
       // console.log("result", result);
+      setResult(result);
+      // router.push("/symptoscan/Step5");
+      // console.log("result", result);
 
       setAnalysisResult(result);
+
+      router.push("/symptoscan/Step5");
     } catch (error) {
       console.error("Analysis failed:", error);
       Alert.alert(
@@ -258,9 +265,9 @@ const Step4 = () => {
     );
   }
 
-  if (analysisResult && !isAnalyzing) {
-    return <Step5 analysisResult={analysisResult} />;
-  }
+  // if (analysisResult && !isAnalyzing) {
+  //   return <Step5 analysisResult={analysisResult} />;
+  // }
 
   return (
     <ScrollView
