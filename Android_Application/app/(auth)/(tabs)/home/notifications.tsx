@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 import { spacing, radii } from "@/design/styles";
-import { useTheme } from "../../../../context/theme-context";
+import { useTheme } from "@/context/theme-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 

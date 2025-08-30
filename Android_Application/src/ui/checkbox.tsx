@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { radii, spacing, typography } from "@/design/styles";
-import { useTheme } from "../../context/theme-context";
+import { useTheme } from "@/context/theme-context";
 import { Ionicons } from "@expo/vector-icons";
 import { JSX } from "react";
 

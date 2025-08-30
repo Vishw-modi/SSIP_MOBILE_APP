@@ -1,5 +1,5 @@
 import { Stack } from "expo-router";
-import { useTheme } from "../../../../context/theme-context";
+import { useTheme } from "@/context/theme-context";
 
 export default function ProfileLayout() {
   const { palette } = useTheme();
@@ -19,7 +19,6 @@ export default function ProfileLayout() {
           fontWeight: "600",
         },
         headerShadowVisible: false,
-        headerLargeTitle: false,
       }}
     >
       <Stack.Screen
@@ -34,7 +33,6 @@ export default function ProfileLayout() {
         name="settings"
         options={{
           title: "Settings",
-          headerBackTitle: "Profile",
           headerTitleAlign: "center",
         }}
       />
@@ -42,7 +40,6 @@ export default function ProfileLayout() {
         name="edit"
         options={{
           title: "Edit Profile",
-          headerBackTitle: "Profile",
           headerTitleAlign: "center",
         }}
       />

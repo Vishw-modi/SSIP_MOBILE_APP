@@ -59,7 +59,7 @@ export default function WelcomeScreen() {
 
         // Routing logic
         if (!userDoc.onboardingComplete) {
-          router.replace("/(onboarding)/user-details");
+          router.replace("/(auth)/(onboarding)/user-details");
           return;
         }
 
@@ -72,7 +72,7 @@ export default function WelcomeScreen() {
           (Date.now() - new Date(storedTime).getTime()) / (1000 * 60 * 60) > 24;
 
         if (needsDailyQuestions) {
-          router.replace("/(onboarding)/(daily-questions)/q-1");
+          router.replace("/(auth)/(onboarding)/(daily-questions)/q-1");
         } else {
           router.replace("/home");
         }

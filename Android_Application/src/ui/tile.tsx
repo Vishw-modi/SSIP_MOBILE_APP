@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { spacing, radii, typography, shadows } from "@/design/styles";
-import { useTheme } from "../../context/theme-context";
+import { useTheme } from "@/context/theme-context";
 import { JSX } from "react";
 
 export function Tile({

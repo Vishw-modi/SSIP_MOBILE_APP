@@ -5,9 +5,10 @@ import {
   Text,
   View,
   Pressable,
+  Platform,
 } from "react-native";
 import { spacing, typography, radii, shadows } from "@/design/styles";
-import { useTheme } from "../../../../context/theme-context";
+import { useTheme } from "@/context/theme-context";
 import { NCard } from "@/ui/card";
 import { NProgress } from "@/ui/progress";
 import { Segmented } from "@/ui/segmented";
@@ -105,14 +106,20 @@ export default function HomeScreen() {
           <Text style={dynamicStyles.greet}>
             {`Hey, ${userName.fullName.split(" ")[0]} 👋`}
           </Text>
+
           <Pressable
-            style={styles.notificationButton}
+            style={({ pressed }) => [
+              styles.notificationButton,
+              pressed &&
+                Platform.select({ ios: { opacity: 0.7 }, default: {} }),
+            ]}
+            android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: true }}
             onPress={() => router.push("/(auth)/(tabs)/home/notifications")}
           >
             <Ionicons
               name="notifications-outline"
-              size={22}
-              color={palette.text} // Now uses theme
+              size={24}
+              color={palette.text}
             />
           </Pressable>
         </View>
