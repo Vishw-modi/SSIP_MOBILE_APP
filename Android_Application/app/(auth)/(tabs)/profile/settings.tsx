@@ -6,7 +6,7 @@ import {
   View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "../../../../context/theme-context";
+import { useTheme } from "@/context/theme-context";
 import { spacing, typography, radii, shadows } from "@/design/styles";
 import { ThemeSelectionBottomSheet } from "@/components/ThemeSelectionModal";
 import { useRef } from "react";

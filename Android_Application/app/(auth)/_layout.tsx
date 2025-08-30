@@ -1,7 +1,7 @@
 import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { useTheme } from "../../context/theme-context";
+import { useTheme } from "@/context/theme-context";
 
 const Layout = () => {
   const { palette } = useTheme();
@@ -23,10 +23,11 @@ const Layout = () => {
               fontWeight: "600",
             },
             headerShadowVisible: false,
-            headerLargeTitle: false,
           }}
         >
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="symptoscan" options={{ headerShown: false }} />
+          <Stack.Screen name="caltrack" options={{ headerShown: false }} />
         </Stack>
       </BottomSheetModalProvider>
     </GestureHandlerRootView>

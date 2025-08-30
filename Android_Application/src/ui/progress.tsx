@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import { radii } from "@/design/styles";
-import { useTheme } from "../../context/theme-context";
+import { useTheme } from "@/context/theme-context";
 import { JSX } from "react";
 
 export function NProgress({ value }: { value: number }): JSX.Element {

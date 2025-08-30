@@ -4,7 +4,7 @@ import { Slot } from "expo-router";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { LogBox, StatusBar, StyleSheet } from "react-native";
 import * as SecureStore from "expo-secure-store";
-import { ThemeProvider, useTheme } from "../context/theme-context";
+import { ThemeProvider, useTheme } from "@/context/theme-context";
 
 // Inner component that uses theme
 function ThemedApp() {
@@ -33,7 +33,9 @@ export default function RootLayout() {
     return null;
   }
 
-  LogBox.ignoreLogs(["Clerk: Clerk has been loaded with development keys"]);
+  LogBox.ignoreLogs([
+    "Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview",
+  ]);
 
   const tokenCache = {
     async getToken(key: string) {

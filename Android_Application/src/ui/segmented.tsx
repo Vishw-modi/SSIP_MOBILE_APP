@@ -1,7 +1,7 @@
 import { JSX, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { radii, typography } from "@/design/styles";
-import { useTheme } from "../../context/theme-context";
+import { useTheme } from "@/context/theme-context";
 
 export function Segmented({
   segments = ["Left", "Right"],

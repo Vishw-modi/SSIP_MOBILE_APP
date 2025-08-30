@@ -1,7 +1,7 @@
 import type { JSX, PropsWithChildren } from "react";
 import { StyleSheet, View, type ViewProps } from "react-native";
 import { radii, spacing, shadows } from "@/design/styles";
-import { useTheme } from "../../context/theme-context";
+import { useTheme } from "@/context/theme-context";
 
 export function NCard({
   style,

@@ -8,7 +8,7 @@ import {
   BottomSheetBackgroundProps,
 } from "@gorhom/bottom-sheet";
 import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "../../context/theme-context"; // 👈 same theme hook
+import { useTheme } from "@/context/theme-context"; // 👈 same theme hook
 import { useRouter } from "expo-router";
 
 // Action button that uses theme
@@ -55,9 +55,6 @@ export const ActionsBottomSheetModal = forwardRef<BottomSheetModal>(
     const { palette } = useTheme(); // 👈 grab theme
     const snapPoints = useMemo(() => ["50%", "65%"], []);
     const router = useRouter();
-    const handleSheetChanges = useCallback((index: number) => {
-      console.log("handleSheetChanges", index);
-    }, []);
 
     const handleClose = useCallback(() => {
       if (ref && typeof ref === "object" && ref.current) {
@@ -82,7 +79,7 @@ export const ActionsBottomSheetModal = forwardRef<BottomSheetModal>(
         title: "Caltrack",
         subtitle: "Log your meals easily",
         onPress: () => {
-          router.push("/(core)/(caltrack)/Caltrack");
+          router.push("/caltrack");
           handleClose();
         },
       },
@@ -91,7 +88,7 @@ export const ActionsBottomSheetModal = forwardRef<BottomSheetModal>(
         title: "SymptoScan",
         subtitle: "Scan and log symptoms",
         onPress: () => {
-          router.push("/(core)/(symptoscan)/SymptoScan");
+          router.push("/symptoscan");
           handleClose();
         },
       },
@@ -118,7 +115,6 @@ export const ActionsBottomSheetModal = forwardRef<BottomSheetModal>(
         ref={ref}
         index={0}
         snapPoints={snapPoints}
-        onChange={handleSheetChanges}
         backgroundStyle={{
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,

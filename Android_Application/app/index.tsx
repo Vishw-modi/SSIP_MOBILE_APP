@@ -20,7 +20,7 @@ export default function AppIndex() {
         if (!isActive) return;
 
         if (!hasCompletedOnboarding) {
-          router.replace("/(intro)/splash");
+          router.replace("/(public)/(intro)/splash");
         } else {
           // Everything is fine → go to Welcome screen
           router.replace("/welcome");

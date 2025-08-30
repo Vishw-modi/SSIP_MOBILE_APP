@@ -1,7 +1,7 @@
 import React, { JSX } from "react";
 import { View, Pressable, Platform, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "../../context/theme-context";
+import { useTheme } from "@/context/theme-context";
 
 // Type definitions
 type RouteIconConfig = {

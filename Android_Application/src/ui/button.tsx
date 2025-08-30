@@ -7,7 +7,7 @@ import {
   type ViewStyle,
 } from "react-native";
 import { radii, spacing, typography } from "@/design/styles";
-import { useTheme } from "../../context/theme-context";
+import { useTheme } from "@/context/theme-context";
 import { JSX, ReactElement } from "react";
 
 type Variant = "primary" | "secondary" | "ghost" | "danger";
