@@ -11,6 +11,7 @@ It combines conversational AI, smart symptom scanning, and daily health check-in
   <img src="https://github.com/user-attachments/assets/32961172-fed9-4ef1-a906-681f7890592f" width="250"/>
   <img src="https://github.com/user-attachments/assets/2a5bc8ad-ffdf-4c9f-ace8-4889fbaadce6" width="250"/>
 </p>
+
 # Symptoscan
 <p align="center">
   <img src="https://github.com/user-attachments/assets/0ba05758-994e-44cc-9b1d-c32af3905b14" width="250"/>
@@ -28,6 +29,7 @@ It combines conversational AI, smart symptom scanning, and daily health check-in
   <img src="https://github.com/user-attachments/assets/e6d782cb-0e28-42dd-b5ab-746d3cb142ec" width="250"/>
   <img src="https://github.com/user-attachments/assets/b6a3ea0f-2853-451a-a4b0-2a290a96b642" width="250"/>
 </p>
+
 # CalTracK 
 <p align="center">
     <img src="https://github.com/user-attachments/assets/43565f4d-3b1b-49e3-b37b-58f9ac5fc3a6" width="250"/>
@@ -132,3 +134,4 @@ PORT=5000
 
 # Start the backend server
 nodemon server.js
+
