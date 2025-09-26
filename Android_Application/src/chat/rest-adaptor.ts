@@ -8,8 +8,9 @@ export class RestAdapter implements ChatAdapter {
     const res = await fetch(`${this.baseUrl}/api/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages }),
+      body: JSON.stringify({ messages }), 
     })
+console.log("messages",JSON.stringify(messages));
 
     if (!res.ok) {
       throw new Error(res.statusText)

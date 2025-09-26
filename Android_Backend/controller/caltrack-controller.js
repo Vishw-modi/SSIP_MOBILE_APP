@@ -46,7 +46,7 @@ export const generateCaltrack = async (req, res) => {
     });
 
     const responseJSON = JSON.parse(result.response.text());
-    console.log("responseJSON parsed and the DATA IS FUCKING FINALLY SEND");
+    console.log("Food image analysed and sended successfully.");
 
     res.status(200).json(responseJSON);
   } catch (error) {

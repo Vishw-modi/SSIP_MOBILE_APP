@@ -15,7 +15,7 @@ export function useChat(adapter: ChatAdapter, options?: Options) {
       const userMsg: ChatMessage = {
         id: ID.unique(),
         role: "user",
-        content: {response: text, question: null, type: null},
+        content: {response: text, question: null, type: null, answer: null },
         createdAt: Date.now(),
       }
       setMessages((prev) => [...prev, userMsg])
@@ -26,7 +26,7 @@ export function useChat(adapter: ChatAdapter, options?: Options) {
         const botMsg: ChatMessage = {
           id: ID.unique(),
           role: "assistant",
-          content: {response: reply.response, question: reply.question, type: reply.type},
+          content: {response: reply.response, question: reply.question, type: reply.type, answer: reply.answer },
           createdAt: Date.now(),
         }
         setMessages((prev) => [...prev, botMsg])

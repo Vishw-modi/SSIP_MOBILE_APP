@@ -13,6 +13,7 @@ import { MotiView } from "moti";
 import { FeatureItem } from "@/components/Feature-Item";
 import { Easing } from "react-native-reanimated";
 import { router } from "expo-router";
+import { transparent } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
 
 const SymptoScan = () => {
   const features = [
@@ -61,7 +62,7 @@ const SymptoScan = () => {
             duration: 450,
             easing: Easing.out(Easing.cubic),
           }}
-          style={styles.card}
+          // style={styles.card}
         >
           <Text style={styles.title}>Introducing SymptomScan</Text>
           <Text style={styles.lead}>
@@ -116,20 +117,20 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingTop: 24,
   },
-  card: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 20,
-    paddingVertical: 24,
-    paddingHorizontal: 16,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    // subtle shadow
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 4,
-  },
+  // card: {
+  //   backgroundColor: "transparent",
+  //   borderRadius: 20,
+  //   paddingVertical: 24,
+  //   paddingHorizontal: 16,
+  //   borderWidth: 1,
+  //   borderColor: "#E5E7EB",
+  //   // subtle shadow
+  //   shadowColor: "#000",
+  //   shadowOffset: { width: 0, height: 6 },
+  //   shadowOpacity: 0.08,
+  //   shadowRadius: 12,
+  //   elevation: 4,
+  // },
   title: {
     fontSize: 28,
     fontWeight: "800",

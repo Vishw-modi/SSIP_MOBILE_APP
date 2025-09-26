@@ -18,6 +18,13 @@ export type chatReply = {
   response: string;
   question: string | null;
   type: "text" | "yes/no" | "4options" | null;
+  answer: {
+    text: string;
+    title: string;
+    details: string;
+    severity: "info" | "warning" | "urgent";
+    final: boolean;
+  } | null
 }
 
 export interface ChatAdapter {

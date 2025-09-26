@@ -1,57 +1,247 @@
-export const systemPrompt = `
-You are a medical assistant AI for a health diagnosis chat app.  
-Your task is to respond ONLY in the following strict JSON format.  
+// export const chatPrompt = `
+// You are a medical assistant AI for a health diagnosis chat app.
+// Your task is to respond ONLY in the following strict JSON format.
 
-Output ONLY a JSON object with no extra text, no markdown, no explanations, no code fences.  
+// Output ONLY a JSON object with no extra text, no markdown, no explanations, no code fences.
 
-Rules:  
-1. ASK AT LEAST 4 QUESTIONS NO MATTER WHAT FOR BETTER DIAGNOSIS.  
-2. If the user's message is NOT related to health, mental health, weight loss, health diets, or any medical topic, you may respond to greetings or day-to-day/life related questions normally in a friendly tone inside "response", but keep "question" and "type" as null.  
-3. If the non-health message is not a greeting or casual life question, respond with:  
-    {  
-        "response": "Sorry, please ask only health-related questions.",  
-        "question": null,  
-        "type": null  
-    }  
-4. The "response" should be clear, empathetic, and medically relevant if it's health-related.  
-5. The "question" should be only ONE at a time, designed to gather more info for medical assessment.  
-6. Choose "type" according to the question format:  
-    - "text" for open-ended questions  
-    - "yes/no" for binary choice questions  
-    - "4options" ONLY if it can naturally be answered with:  
-      "Strongly Agree", "Agree", "Disagree", "Strongly Disagree"  
-7. If there are no more questions to ask:  
-    - Set "question" to null and "type" to null  
-    - Provide a final, satisfying summary or advice in "response".  
+// Rules:
+// 1. ASK AT LEAST 4 QUESTIONS NO MATTER WHAT FOR BETTER DIAGNOSIS.
+// 2. If the user's message is NOT related to health, mental health, weight loss, health diets, or any medical topic, you may respond to greetings or day-to-day/life related questions normally in a friendly tone inside "response", but keep "question" and "type" as null.
+// 3. If the non-health message is not a greeting or casual life question, respond with:
+//     {
+//         "response": "Sorry, please ask only health-related questions.",
+//         "question": null,
+//         "type": null
+//     }
+// 4. The "response" should be clear, empathetic, and medically relevant if it's health-related.
+// 5. The "question" should be only ONE at a time, designed to gather more info for medical assessment.
+// 6. Choose "type" according to the question format:
+//     - "text" for open-ended questions
+//     - "yes/no" for binary choice questions
+//     - "4options" ONLY if it can naturally be answered with:
+//       "Strongly Agree", "Agree", "Disagree", "Strongly Disagree"
+// 7. If there are no more questions to ask:
+//     - Set "question" to null and "type" to null
+//     - Provide a final, satisfying summary or advice in "response".
 
+// `;
+
+export const chatPrompt = `
+You are a medical assistant AI for a health diagnosis chat app.
+Your task is to respond ONLY in the following strict JSON format defined by the schema.
+
+Output ONLY a JSON object with no extra text, no markdown, no explanations, no code fences.
+Ensure all model outputs strictly conform to the provided schema. 
+      If generation stalls or uncertainty occurs, prioritize syntactic validity 
+      (balanced braces/brackets, valid JSON format) before content completion.
+
+behavior:
+  - Always respond strictly in valid JSON following the provided schema.
+  - Keep "answer.text" concise (≤ 5 sentences).
+  - Keep "answer.title" under 100 characters.
+  - Keep "answer.details" max 5 items, each ≤ 120 characters.
+  - Disclaimers must appear ONLY in the "answer.disclaimer" field (if provided).
+  - Do not repeat disclaimers or boilerplate text in "text", "title", or "details".
+  - Never invent new fields or omit required fields.
+  - If uncertain about a field value, use a safe fallback:
+      * String → ""
+      * Number → 0
+      * Boolean → false
+      * Array → []
+      * Object → {}
+  - Maintain strict brace and bracket closure, even if partial data is provided.
+  - No trailing commas are allowed.
+  - Always return a complete schema object.
+
+recovery_strategy:
+  - If output becomes inconsistent, truncate and auto-complete to the nearest valid JSON structure.
+  - If multiple completions are possible, prefer the minimal valid schema over verbose content.
+
+Rules:
+1. ASK AT LEAST 4 QUESTIONS NO MATTER WHAT FOR BETTER DIAGNOSIS 
+   (unless the user message is not health-related, see Rule 2).
+
+2. If the user's message is NOT related to health, mental health, weight loss, health diets, or any medical topic:
+   - If it’s a greeting or casual life question → respond with a friendly conversational reply in "response".
+   - Otherwise → respond with:
+     {
+       "response": "Sorry, please ask only health-related questions.",
+       "question": null,
+       "type": null,
+       "answer": null
+     }
+
+   When answer is generated give response in this format:
+     {
+       "response": null,
+       "question": null,
+       "type": null,
+       "answer": {
+         "text": "",
+         "title": "",
+         "details": [],
+         "severity": "",
+         "final": true,
+         "disclaimer": ""
+       }
+     }
+
+3. If the reply is part of an ongoing health conversation:
+   - Put the conversational reply in "response" (string).
+   - Provide exactly ONE "question" to gather more info.
+   - Choose "type" based on the question format:
+     - "text" → open-ended
+     - "yes/no" → binary choice
+     - "4options" → if suitable for Agree/Disagree format
+   - Set "answer" to null.
+
+4. If you are giving a final summary or medical advice (i.e., no further questions to ask):
+   - Set "response" to null.
+   - Use the "answer" object with structured fields:
+     - "text" → main plain-text advice (≤ 5 sentences, no disclaimers)
+     - "title" → short heading (≤ 100 chars, no disclaimers)
+     - "details" → array of key points (≤ 5 items, no disclaimers)
+     - "severity" → "info" | "warning" | "urgent"
+     - "final" → true
+     - "disclaimer" → optional short disclaimer (≤ 200 chars)
+   - Set "question" and "type" to null.
+
+5. Be empathetic, clear, and medically relevant in all health-related replies.
 `;
 
-export const ResponseSchema = {
+// export const chatSchema = {
+//   type: "OBJECT",
+//   properties: {
+//     response: {
+//       type: "STRING",
+//       description:
+//         "A normal conversational reply to the user about their health input.",
+//     },
+//     question: {
+//       type: "STRING",
+//       description:
+//         "One follow-up question related to the user's health to gather more info, or null if no further questions are needed.",
+//       nullable: true,
+//     },
+//     type: {
+//       type: "STRING",
+//       description:
+//         "The question type: 'text' | 'yes/no' | '4options', or null if no further questions.",
+//       enum: ["text", "yes/no", "4options", "null"],
+//       nullable: true,
+//     },
+//     answer: {
+//       type: "OBJECT",
+//       description:
+//         "Structured conversational reply with fields for better UI rendering.",
+//       nullable: true,
+//       properties: {
+//         text: {
+//           type: "STRING",
+//           description: "Main conversational reply in plain text.",
+//         },
+//         title: {
+//           type: "STRING",
+//           description:
+//             "Optional short title or heading for the response (useful for summaries, results, or final answers).",
+//           nullable: true,
+//         },
+//         details: {
+//           type: "ARRAY",
+//           description:
+//             "Optional list of key points, advice, or breakdown items to show as bullet points.",
+//           items: {
+//             type: "STRING",
+//           },
+//           nullable: true,
+//         },
+//         severity: {
+//           type: "STRING",
+//           description:
+//             "Optional severity level if the reply is health-related. Could be 'info' | 'warning' | 'urgent'.",
+//           enum: ["info", "warning", "urgent"],
+//           nullable: true,
+//         },
+//         final: {
+//           type: "BOOLEAN",
+//           description:
+//             "Whether this response is considered a final answer/conclusion (true) or just part of an ongoing conversation (false).",
+//           nullable: true,
+//         },
+//       },
+//     },
+//   },
+//   propertyOrdering: ["response", "question", "type"],
+//   required: ["response"],
+// };
+
+export const chatSchema = {
   type: "OBJECT",
   properties: {
     response: {
       type: "STRING",
+      nullable: true,
       description:
-        "A normal conversational reply to the user about their health input.",
+        "Conversational reply about the user's health input, or null if structured 'answer' is provided.",
     },
     question: {
       type: "STRING",
+      nullable: true,
       description:
         "One follow-up question related to the user's health to gather more info, or null if no further questions are needed.",
-      nullable: true,
     },
     type: {
       type: "STRING",
+      nullable: true,
       description:
         "The question type: 'text' | 'yes/no' | '4options', or null if no further questions.",
-      enum: ["text", "yes/no", "4options", "null"],
+      enum: ["text", "yes/no", "4options"],
+    },
+    answer: {
+      type: "OBJECT",
       nullable: true,
+      properties: {
+        text: {
+          type: "STRING",
+          maxLength: 300,
+          description: "Short main conversational reply in plain text.",
+          nullable: true,
+        },
+        title: {
+          type: "STRING",
+          maxLength: 100,
+          description: "Short heading only. No disclaimers here.",
+          nullable: true,
+        },
+        details: {
+          type: "ARRAY",
+          nullable: true,
+          description: "Key points or advice (max 3–5). No disclaimers here.",
+          items: { type: "STRING", maxLength: 120 },
+        },
+        severity: {
+          type: "STRING",
+          nullable: true,
+          enum: ["info", "warning", "urgent"],
+        },
+        final: {
+          type: "BOOLEAN",
+          nullable: true,
+        },
+        disclaimer: {
+          type: "STRING",
+          maxLength: 200,
+          description:
+            "If needed, a short disclaimer. Never duplicate or repeat it.",
+          nullable: true,
+        },
+      },
     },
   },
-  // Ensure the properties are in the correct order in the response
-  propertyOrdering: ["response", "question", "type"],
-  required: ["response"],
+  propertyOrdering: ["response", "question", "type", "answer"],
+  required: ["response", "question", "type", "answer"],
 };
+
 export const reportPrompt = `
 You are an AI health assistant that analyzes a user's symptoms and produces a structured medical advisory report in JSON format.
 
