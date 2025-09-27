@@ -1,1 +1,1 @@
-export const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL?.trim() || "http://10.39.216.74:5000"   
+export const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL?.trim() || "http://10.196.166.74:5000"   

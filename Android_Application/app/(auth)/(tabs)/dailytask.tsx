@@ -1,120 +1,120 @@
-// import React, { useEffect, useState } from "react";
-// import { View, StyleSheet, StatusBar } from "react-native";
-// import { MotiText } from "moti";
+import React, { useEffect, useState } from "react";
+import { View, StyleSheet, StatusBar } from "react-native";
+import { MotiText } from "moti";
 
-// const SplashScreen = ({ onAnimationComplete }) => {
-//   const [stage, setStage] = useState("healthVitals");
+const SplashScreen = ({ onAnimationComplete }) => {
+  const [stage, setStage] = useState("healthVitals");
 
-//   useEffect(() => {
-//     const t1 = setTimeout(() => setStage("showAI"), 1200); // show AI
-//     const t2 = setTimeout(() => setStage("zoomV"), 2200); // zoom V
-//     const t3 = setTimeout(() => {
-//       onAnimationComplete && onAnimationComplete();
-//     }, 3700);
+  useEffect(() => {
+    const t1 = setTimeout(() => setStage("showAI"), 1200); // show AI
+    const t2 = setTimeout(() => setStage("zoomV"), 2200); // zoom V
+    const t3 = setTimeout(() => {
+      onAnimationComplete && onAnimationComplete();
+    }, 3700);
 
-//     return () => {
-//       clearTimeout(t1);
-//       clearTimeout(t2);
-//       clearTimeout(t3);
-//     };
-//   }, []);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
+  }, []);
 
-//   return (
-//     <View style={styles.container}>
-//       <StatusBar hidden />
+  return (
+    <View style={styles.container}>
+      <StatusBar hidden />
 
-//       <View style={styles.column}>
-//         {/* HEALTH + V + ITALS */}
-//         <View style={styles.textRow}>
-//           <MotiText
-//             style={styles.mainText}
-//             animate={{
-//               opacity: stage === "zoomV" ? 0 : 1, // fade out when zooming
-//             }}
-//             from={{ opacity: 0 }}
-//             transition={{ type: "timing", duration: 600 }}
-//           >
-//             HEALTH
-//           </MotiText>
+      <View style={styles.column}>
+        {/* HEALTH + V + ITALS */}
+        <View style={styles.textRow}>
+          <MotiText
+            style={styles.mainText}
+            animate={{
+              opacity: stage === "zoomV" ? 0 : 1, // fade out when zooming
+            }}
+            from={{ opacity: 0 }}
+            transition={{ type: "timing", duration: 600 }}
+          >
+            HEALTH
+          </MotiText>
 
-//           <MotiText
-//             style={[styles.mainText, styles.vLetter]}
-//             animate={{
-//               scale: stage === "zoomV" ? 80 : 1,
-//               opacity: 1, // always visible during zoom
-//             }}
-//             from={{ scale: 0.8, opacity: 0 }}
-//             transition={{ type: "timing", duration: 1500 }}
-//           >
-//             V
-//           </MotiText>
+          <MotiText
+            style={[styles.mainText, styles.vLetter]}
+            animate={{
+              scale: stage === "zoomV" ? 80 : 1,
+              opacity: 1, // always visible during zoom
+            }}
+            from={{ scale: 0.8, opacity: 0 }}
+            transition={{ type: "timing", duration: 1500 }}
+          >
+            V
+          </MotiText>
 
-//           <MotiText
-//             style={styles.mainText}
-//             animate={{
-//               opacity: stage === "zoomV" ? 0 : 1, // fade out when zooming
-//             }}
-//             from={{ opacity: 0 }}
-//             transition={{ type: "timing", duration: 600 }}
-//           >
-//             ITALS
-//           </MotiText>
-//         </View>
+          <MotiText
+            style={styles.mainText}
+            animate={{
+              opacity: stage === "zoomV" ? 0 : 1, // fade out when zooming
+            }}
+            from={{ opacity: 0 }}
+            transition={{ type: "timing", duration: 600 }}
+          >
+            ITALS
+          </MotiText>
+        </View>
 
-//         {/* AI text */}
-//         <MotiText
-//           style={styles.aiText}
-//           animate={{
-//             opacity: stage === "showAI" ? 1 : 0, // visible only in showAI stage
-//             translateY: stage === "showAI" ? 0 : 20,
-//             scale: stage === "showAI" ? 1 : 0.9,
-//           }}
-//           transition={{ type: "timing", duration: 700 }}
-//         >
-//           AI
-//         </MotiText>
-//       </View>
-//     </View>
-//   );
-// };
+        {/* AI text */}
+        <MotiText
+          style={styles.aiText}
+          animate={{
+            opacity: stage === "showAI" ? 1 : 0, // visible only in showAI stage
+            translateY: stage === "showAI" ? 0 : 20,
+            scale: stage === "showAI" ? 1 : 0.9,
+          }}
+          transition={{ type: "timing", duration: 700 }}
+        >
+          AI
+        </MotiText>
+      </View>
+    </View>
+  );
+};
 
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: "#000",
-//     justifyContent: "center",
-//     alignItems: "center",
-//   },
-//   column: {
-//     alignItems: "center",
-//     justifyContent: "center",
-//   },
-//   textRow: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//   },
-//   mainText: {
-//     fontSize: 42,
-//     fontWeight: "800",
-//     color: "#FFF",
-//     letterSpacing: 2,
-//   },
-//   vLetter: {
-//     fontSize: 42,
-//     fontWeight: "900",
-//     color: "#00D4FF",
-//     marginHorizontal: 4,
-//   },
-//   aiText: {
-//     fontSize: 38,
-//     fontWeight: "700",
-//     color: "#00D4FF",
-//     letterSpacing: 3,
-//     marginTop: 10,
-//   },
-// });
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#000",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  column: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  textRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  mainText: {
+    fontSize: 42,
+    fontWeight: "800",
+    color: "#FFF",
+    letterSpacing: 2,
+  },
+  vLetter: {
+    fontSize: 42,
+    fontWeight: "900",
+    color: "#00D4FF",
+    marginHorizontal: 4,
+  },
+  aiText: {
+    fontSize: 38,
+    fontWeight: "700",
+    color: "#00D4FF",
+    letterSpacing: 3,
+    marginTop: 10,
+  },
+});
 
-// export default SplashScreen;
+export default SplashScreen;
 // // PatientSummary.tsx
 // // import React from "react";
 // // import { View, Text, ScrollView, Button, StyleSheet } from "react-native";
@@ -216,87 +216,87 @@
 // //   },
 // // });
 
-import React, { useState } from "react";
-import { Alert, Modal, StyleSheet, Text, Pressable, View } from "react-native";
-import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
-const dailytask = () => {
-  const [modalVisible, setModalVisible] = useState(false);
-  return (
-    <SafeAreaProvider>
-      <SafeAreaView style={styles.centeredView}>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            Alert.alert("Modal has been closed.");
-            setModalVisible(!modalVisible);
-          }}
-        >
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalText}>Hello World!</Text>
-              <Pressable
-                style={[styles.button, styles.buttonClose]}
-                onPress={() => setModalVisible(!modalVisible)}
-              >
-                <Text style={styles.textStyle}>Hide Modal</Text>
-              </Pressable>
-            </View>
-          </View>
-        </Modal>
-        <Pressable
-          style={[styles.button, styles.buttonOpen]}
-          onPress={() => setModalVisible(true)}
-        >
-          <Text style={styles.textStyle}>Show Modal</Text>
-        </Pressable>
-      </SafeAreaView>
-    </SafeAreaProvider>
-  );
-};
+// import React, { useState } from "react";
+// import { Alert, Modal, StyleSheet, Text, Pressable, View } from "react-native";
+// import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
+// const dailytask = () => {
+//   const [modalVisible, setModalVisible] = useState(false);
+//   return (
+//     <SafeAreaProvider>
+//       <SafeAreaView style={styles.centeredView}>
+//         <Modal
+//           animationType="slide"
+//           transparent={true}
+//           visible={modalVisible}
+//           onRequestClose={() => {
+//             Alert.alert("Modal has been closed.");
+//             setModalVisible(!modalVisible);
+//           }}
+//         >
+//           <View style={styles.centeredView}>
+//             <View style={styles.modalView}>
+//               <Text style={styles.modalText}>Hello World!</Text>
+//               <Pressable
+//                 style={[styles.button, styles.buttonClose]}
+//                 onPress={() => setModalVisible(!modalVisible)}
+//               >
+//                 <Text style={styles.textStyle}>Hide Modal</Text>
+//               </Pressable>
+//             </View>
+//           </View>
+//         </Modal>
+//         <Pressable
+//           style={[styles.button, styles.buttonOpen]}
+//           onPress={() => setModalVisible(true)}
+//         >
+//           <Text style={styles.textStyle}>Show Modal</Text>
+//         </Pressable>
+//       </SafeAreaView>
+//     </SafeAreaProvider>
+//   );
+// };
 
-const styles = StyleSheet.create({
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  button: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-  },
-  buttonOpen: {
-    backgroundColor: "#F194FF",
-  },
-  buttonClose: {
-    backgroundColor: "#2196F3",
-  },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: "center",
-  },
-});
+// const styles = StyleSheet.create({
+//   centeredView: {
+//     flex: 1,
+//     justifyContent: "center",
+//     alignItems: "center",
+//   },
+//   modalView: {
+//     margin: 20,
+//     backgroundColor: "white",
+//     borderRadius: 20,
+//     padding: 35,
+//     alignItems: "center",
+//     shadowColor: "#000",
+//     shadowOffset: {
+//       width: 0,
+//       height: 2,
+//     },
+//     shadowOpacity: 0.25,
+//     shadowRadius: 4,
+//     elevation: 5,
+//   },
+//   button: {
+//     borderRadius: 20,
+//     padding: 10,
+//     elevation: 2,
+//   },
+//   buttonOpen: {
+//     backgroundColor: "#F194FF",
+//   },
+//   buttonClose: {
+//     backgroundColor: "#2196F3",
+//   },
+//   textStyle: {
+//     color: "white",
+//     fontWeight: "bold",
+//     textAlign: "center",
+//   },
+//   modalText: {
+//     marginBottom: 15,
+//     textAlign: "center",
+//   },
+// });
 
-export default dailytask;
+// export default dailytask;
