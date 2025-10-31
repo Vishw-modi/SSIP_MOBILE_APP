@@ -301,6 +301,7 @@
 //     gap: spacing.xs,
 //   },
 // });
+
 "use client";
 
 import {
@@ -390,7 +391,7 @@ const HealthScoreCircle = ({
       ]}
     >
       <View style={styles.scoreCircle}>
-        <Svg width={120} height={120} viewBox="0 0 120 120">
+        <Svg width={145} height={145} viewBox="0 0 120 120">
           <Circle
             cx="60"
             cy="60"
@@ -412,7 +413,9 @@ const HealthScoreCircle = ({
           />
         </Svg>
         <View style={styles.scoreText}>
-          <Text style={[typography.h3, { color: palette.text }]}>{score}</Text>
+          <Text style={[typography.h3, { color: palette.text }]}>
+            {score}/100
+          </Text>
           <Text style={[typography.caption, { color: palette.textMuted }]}>
             Score
           </Text>
@@ -858,7 +861,8 @@ export default function HomeScreen() {
     sectionTitle: {
       ...typography.labelSmall,
       color: palette.text,
-      fontWeight: "600",
+      fontWeight: "800",
+      fontSize: 14,
       textTransform: "uppercase",
       letterSpacing: 0.5,
     },
@@ -988,7 +992,7 @@ export default function HomeScreen() {
               </Text>
             </View>
           ) : healthError ? (
-            <NCard style={styles.emptyStateCard}>
+            <View style={styles.emptyStateCard}>
               <View style={styles.emptyStateContent}>
                 <Ionicons
                   name="document-text-outline"
@@ -1037,13 +1041,13 @@ export default function HomeScreen() {
                   </Text>
                 </Pressable>
               </View>
-            </NCard>
+            </View>
           ) : healthData ? (
             <>
-              <NCard style={styles.healthScoreCard}>
+              <View style={styles.healthScoreCard}>
                 <View style={styles.scoreHeader}>
                   <Text style={dynamicStyles.sectionTitle}>
-                    Your Health Score
+                    Your Last Health Score
                   </Text>
                   <View
                     style={[
@@ -1162,7 +1166,7 @@ export default function HomeScreen() {
                     </Text>
                   </Pressable>
                 </View>
-              </NCard>
+              </View>
             </>
           ) : null}
         </>
@@ -1192,12 +1196,12 @@ export default function HomeScreen() {
 
           {healthData && (
             <>
-              <NCard style={styles.overviewCard}>
+              <View style={styles.overviewCard}>
                 <Text style={dynamicStyles.sectionTitle}>
                   Current Health Overview
                 </Text>
                 <View style={{ gap: spacing.md, marginTop: spacing.md }}>
-                  <View>
+                  <NCard>
                     <Text
                       style={[
                         typography.labelSmall,
@@ -1214,7 +1218,7 @@ export default function HomeScreen() {
                     >
                       {healthData.summary}
                     </Text>
-                  </View>
+                  </NCard>
                   <View>
                     <Text
                       style={[typography.caption, { color: palette.textMuted }]}
@@ -1223,7 +1227,7 @@ export default function HomeScreen() {
                     </Text>
                   </View>
                 </View>
-              </NCard>
+              </View>
 
               {healthData.possibleConditions.length > 0 && (
                 <NCard style={styles.conditionsCard}>
@@ -1261,7 +1265,7 @@ export default function HomeScreen() {
               </NCard>
 
               {allHealthRecords.length > 1 && (
-                <NCard style={styles.historyCard}>
+                <View style={styles.historyCard}>
                   <Text style={dynamicStyles.sectionTitle}>Health History</Text>
                   <View style={styles.timelineContainer}>
                     {allHealthRecords.map((record, idx) => (
@@ -1323,7 +1327,7 @@ export default function HomeScreen() {
                       </View>
                     ))}
                   </View>
-                </NCard>
+                </View>
               )}
             </>
           )}
@@ -1449,7 +1453,7 @@ const styles = StyleSheet.create({
   },
 
   scoreMainContent: {
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
     gap: spacing.lg,
   },
@@ -1468,6 +1472,8 @@ const styles = StyleSheet.create({
   },
 
   scoreText: {
+    // fontSize: 8,
+    fontWeight: "300",
     alignItems: "center",
     position: "absolute",
   },
