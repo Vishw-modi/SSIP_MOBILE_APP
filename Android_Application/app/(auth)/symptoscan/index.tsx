@@ -13,7 +13,6 @@ import { MotiView } from "moti";
 import { FeatureItem } from "@/components/Feature-Item";
 import { Easing } from "react-native-reanimated";
 import { router } from "expo-router";
-import { transparent } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
 
 const SymptoScan = () => {
   const features = [

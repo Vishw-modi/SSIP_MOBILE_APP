@@ -842,8 +842,8 @@ function FullScreenAnswerModal({
     <Modal
       animationType="slide"
       visible={visible}
+      transparent={true}
       statusBarTranslucent
-      presentationStyle="overFullScreen"
       onRequestClose={onClose}
     >
       <View style={styles.fsRoot}>
@@ -1264,7 +1264,7 @@ export default function ChatBotScreen() {
             source={require("../../../assets/images/nutrizy-logo.png")}
             style={styles.avatar}
           />
-          <Text style={styles.title}>Medi-Chat</Text>
+          <Text style={styles.title}>Laso-AI</Text>
         </View>
 
         <View style={{ width: 36 }} />

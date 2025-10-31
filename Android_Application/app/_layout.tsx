@@ -5,6 +5,7 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { LogBox, StatusBar, StyleSheet } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import { ThemeProvider, useTheme } from "@/context/theme-context";
+import { UserProvider } from "@/context/UserContext";
 
 // Inner component that uses theme
 function ThemedApp() {
@@ -60,7 +61,9 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <ThemeProvider>
         <ClerkProvider tokenCache={tokenCache}>
-          <ThemedApp />
+          <UserProvider>
+            <ThemedApp />
+          </UserProvider>
         </ClerkProvider>
       </ThemeProvider>
     </SafeAreaProvider>
