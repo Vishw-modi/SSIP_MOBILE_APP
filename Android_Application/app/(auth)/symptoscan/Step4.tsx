@@ -19,6 +19,7 @@ import { BACKEND_URL } from "@/chat/config";
 import Step5 from "./Step5";
 import Toast from "react-native-toast-message";
 import { useResult } from "@/context/result-context";
+import { useUserContext } from "@/context/UserContext";
 
 export type AnalysisResult = {
   possibleConditions: string[];
@@ -46,6 +47,9 @@ export type AnalysisResult = {
 
 const Step4 = () => {
   const { setResult } = useResult();
+  const { userData, isLoaded } = useUserContext();
+  // console.log("userdata from context", userData);
+
   const router = useRouter();
   const { selectedSymptoms, demographics, lifestyle, bodyAreas } =
     useSymptoms();
@@ -175,6 +179,7 @@ const Step4 = () => {
       const formData = new FormData();
 
       formData.append("payload", JSON.stringify(basePayload));
+      formData.append("clerkUserId", userData?.clerkuserid ?? "");
 
       reportFile.forEach((file) => {
         formData.append("reportfiles", {
