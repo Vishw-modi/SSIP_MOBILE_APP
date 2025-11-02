@@ -10,6 +10,7 @@ import { useSplash } from "@/hooks/use-splash-screen";
 import CustomSplashScreen from "@/components/ApplicationSplashScreen";
 import { ScrollAwareStatusBar } from "@/components/ApplicationStatusBar";
 import { useRef } from "react";
+import { palette } from "@/design/styles";
 
 // Inner component that uses theme
 function ThemedApp() {
@@ -19,7 +20,7 @@ function ThemedApp() {
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: palette.bg }]}
-      edges={["top"]}
+      edges={["top", "left", "right", "bottom"]}
     >
       <ScrollAwareStatusBar scrollY={scorllY} />
       <StatusBar
@@ -86,6 +87,7 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    color: palette.text,
     // Remove the manual paddingTop - SafeAreaView handles this
   },
 });

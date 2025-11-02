@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "LifeTNative",
+    "name": "HealthVitals-AI",
     "slug": "LifeTNative",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/favicon.jpeg",
+    "icon": "./assets/images/HealthVitals-AI.png",
     "scheme": "lifetnative",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,7 +13,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/favicon.jpeg",
+        "foregroundImage": "./assets/images/HealthVitals-AI.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,

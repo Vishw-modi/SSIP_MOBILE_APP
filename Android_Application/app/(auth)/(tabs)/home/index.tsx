@@ -888,7 +888,7 @@ export default function HomeScreen() {
                 Platform.select({ ios: { opacity: 0.7 }, default: {} }),
             ]}
             android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: true }}
-            onPress={() => router.replace("/(auth)/(tabs)/home/notifications")}
+            onPress={() => router.push("/(auth)/(tabs)/home/notifications")}
           >
             <Ionicons
               name="notifications-outline"
