@@ -881,6 +881,7 @@ import {
   StyleSheet,
   SafeAreaView,
   StatusBar,
+  Alert,
 } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
@@ -888,7 +889,7 @@ import { MotiView } from "moti";
 import type { AnalysisResult } from "./Step4";
 
 import { router } from "expo-router";
-import { handleDownloadReport } from "./DownloadPdf";
+// import { handleDownloadReport } from "./DownloadPdf";
 import { useResult } from "@/context/result-context";
 import { PanResponder } from "react-native";
 
@@ -1474,7 +1475,9 @@ const Step5 = () => {
           <TouchableOpacity
             style={styles.downloadButton}
             onPress={() => {
-              handleDownloadReport(analysisResult);
+              // handleDownloadReport(analysisResult);
+              Alert.alert("Currently in development");
+              return null;
             }}
           >
             <Ionicons name="download-outline" size={20} color="#FFFFFF" />

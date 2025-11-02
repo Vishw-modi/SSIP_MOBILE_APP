@@ -67,10 +67,10 @@ const Step2 = () => {
           duration: 450,
           easing: Easing.out(Easing.cubic),
         }}
-        style={[styles.card, { backgroundColor: palette.card }]}
+        style={[styles.card]}
       >
         <Text style={[styles.title, { color: palette.text }]}>
-          SymptomScan Pro
+          SymptoScan Pro
         </Text>
         <Text style={[styles.lead, { color: palette.textMuted }]}>
           Our comprehensive AI-powered health analysis tool. Get detailed

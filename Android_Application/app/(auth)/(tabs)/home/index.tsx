@@ -305,7 +305,6 @@
 "use client";
 
 import {
-  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -316,12 +315,10 @@ import {
   ActivityIndicator,
   Modal,
 } from "react-native";
-import { spacing, typography, radii, shadows } from "@/design/styles";
+import { spacing, typography, radii } from "@/design/styles";
 import { useTheme } from "@/context/theme-context";
 import { NCard } from "@/ui/card";
-import { NProgress } from "@/ui/progress";
 import { Segmented } from "@/ui/segmented";
-import { Tile } from "@/ui/tile";
 import { Ionicons } from "@expo/vector-icons";
 import { useUser } from "@clerk/clerk-expo";
 import { useEffect, useState } from "react";
@@ -891,7 +888,7 @@ export default function HomeScreen() {
                 Platform.select({ ios: { opacity: 0.7 }, default: {} }),
             ]}
             android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: true }}
-            onPress={() => router.push("/(auth)/(tabs)/home/notifications")}
+            onPress={() => router.replace("/(auth)/(tabs)/home/notifications")}
           >
             <Ionicons
               name="notifications-outline"
@@ -902,76 +899,184 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      <Text style={dynamicStyles.headline}>Personalize your Consultation</Text>
-
       <View style={styles.segmentedContainer}>
-        <Segmented
-          segments={["Appointment", "Analytics"]}
-          onChange={setActiveTab}
-        />
+        <Segmented segments={["Home", "Analytics"]} onChange={setActiveTab} />
       </View>
 
       {activeTab === 0 ? (
         <>
-          <NCard style={styles.appointment}>
-            <View style={styles.appointmentRow}>
-              <Image
-                source={require("../../../../assets/images/favicon.jpeg")}
-                style={styles.patientAvatar}
-              />
-              <View style={styles.patientInfo}>
-                <Text style={dynamicStyles.patientName}>
-                  {user?.fullName ?? "Your Client"}
-                </Text>
-                <Text style={styles.patientMeta}>
-                  32 Years | Dietetics / Nutrition
+          {/* SymptoScan and CalTrack feature cards */}
+          <View style={styles.featureCardsContainer}>
+            {/* SymptoScan Card */}
+            <Pressable
+              style={[
+                styles.featureCard,
+                {
+                  backgroundColor: palette.surface,
+                  borderColor: palette.border,
+                },
+              ]}
+              onPress={() => router.push("/(auth)/symptoscan")}
+              android_ripple={{ color: "rgba(0,0,0,0.1)" }}
+            >
+              <View style={styles.featureCardHeader}>
+                <View
+                  style={[
+                    styles.featureIcon,
+                    { backgroundColor: "rgba(79, 70, 229, 0.1)" },
+                  ]}
+                >
+                  <Ionicons
+                    name="heart-outline"
+                    size={24}
+                    color={palette.primary}
+                  />
+                </View>
+                <Text
+                  style={[
+                    typography.label,
+                    { color: palette.text, fontWeight: "700" },
+                  ]}
+                >
+                  SymptoScan
                 </Text>
               </View>
-              <View
+              <Text
                 style={[
-                  styles.videoCallButton,
-                  { backgroundColor: palette.primary },
+                  typography.bodySmall,
+                  {
+                    color: palette.textMuted,
+                    lineHeight: 18,
+                    marginTop: spacing.sm,
+                  },
                 ]}
               >
-                <Ionicons
-                  name="videocam"
-                  size={16}
-                  color={palette.textInverse}
-                />
+                AI-powered symptom analysis. Get a health score, possible
+                conditions, and personalized preventive measures.
+              </Text>
+              <View style={styles.cardFooter}>
+                <Text
+                  style={[
+                    typography.caption,
+                    { color: palette.primary, fontWeight: "600" },
+                  ]}
+                >
+                  Start Analysis →
+                </Text>
               </View>
-            </View>
+            </Pressable>
 
-            <View style={styles.timePill}>
-              <Ionicons name="calendar" size={14} color={palette.textInverse} />
-              <Text style={dynamicStyles.timePillText}>
-                Sun, Jan 19, 08:00am - 10:00am
+            {/* CalTrack Card */}
+            <Pressable
+              style={[
+                styles.featureCard,
+                {
+                  backgroundColor: palette.surface,
+                  borderColor: palette.border,
+                },
+              ]}
+              onPress={() => router.push("/(auth)/caltrack")}
+              android_ripple={{ color: "rgba(0,0,0,0.1)" }}
+            >
+              <View style={styles.featureCardHeader}>
+                <View
+                  style={[
+                    styles.featureIcon,
+                    { backgroundColor: "rgba(79, 70, 229, 0.1)" },
+                  ]}
+                >
+                  <Ionicons
+                    name="nutrition-outline"
+                    size={24}
+                    color={palette.primary}
+                  />
+                </View>
+                <Text
+                  style={[
+                    typography.label,
+                    { color: palette.text, fontWeight: "700" },
+                  ]}
+                >
+                  CalTrack
+                </Text>
+              </View>
+              <Text
+                style={[
+                  typography.bodySmall,
+                  {
+                    color: palette.textMuted,
+                    lineHeight: 18,
+                    marginTop: spacing.sm,
+                  },
+                ]}
+              >
+                Track nutrition with AI image recognition. Analyze meals, get
+                macro breakdowns, and personalized diet insights.
               </Text>
-            </View>
-          </NCard>
-
-          <View style={styles.tilesRow}>
-            <Tile icon="people" title="Patients" subtitle="16 New Patients" />
-            <Tile icon="card" title="Billing" subtitle="3 Payment Done" />
+              <View style={styles.cardFooter}>
+                <Text
+                  style={[
+                    typography.caption,
+                    { color: palette.primary, fontWeight: "600" },
+                  ]}
+                >
+                  Track Meal →
+                </Text>
+              </View>
+            </Pressable>
           </View>
-          <View style={styles.tilesRow}>
-            <Tile icon="folder" title="Records" subtitle="Labs & Reports" />
-            <Tile icon="notifications" title="Alerts" subtitle="2 Pending" />
-          </View>
 
-          <View style={styles.progressGrid}>
-            <NCard style={styles.progressCard}>
-              <Text style={dynamicStyles.sectionTitle}>
-                Today&apos;s Completion
-              </Text>
-              <NProgress value={68} />
-              <Text style={dynamicStyles.progressCaption}>68% completed</Text>
-            </NCard>
-            <NCard style={styles.activePlansCard}>
-              <Text style={dynamicStyles.sectionTitle}>Active Plans</Text>
-              <View style={styles.activePlansRow}>
-                <Ionicons name="fitness" size={16} color={palette.primary} />
-                <Text style={dynamicStyles.activePlansText}>
-                  3 nutrition plans
+          {/* What This App Does Section */}
+          <View style={styles.appInfoSection}>
+            <Text
+              style={[dynamicStyles.sectionTitle, { marginBottom: spacing.md }]}
+            >
+              What This App Does
+            </Text>
+            <NCard style={styles.infoCard}>
+              <View style={styles.infoItem}>
+                <Ionicons
+                  name="checkmark-circle"
+                  size={20}
+                  color={palette.primary}
+                />
+                <Text
+                  style={[
+                    typography.bodySmall,
+                    { color: palette.text, flex: 1, marginLeft: spacing.sm },
+                  ]}
+                >
+                  AI-driven symptom analysis & health insights
+                </Text>
+              </View>
+              <View style={[styles.infoItem, { marginTop: spacing.md }]}>
+                <Ionicons
+                  name="checkmark-circle"
+                  size={20}
+                  color={palette.primary}
+                />
+                <Text
+                  style={[
+                    typography.bodySmall,
+                    { color: palette.text, flex: 1, marginLeft: spacing.sm },
+                  ]}
+                >
+                  Smart nutrition tracking with image recognition
+                </Text>
+              </View>
+              <View style={[styles.infoItem, { marginTop: spacing.md }]}>
+                <Ionicons
+                  name="checkmark-circle"
+                  size={20}
+                  color={palette.primary}
+                />
+                <Text
+                  style={[
+                    typography.bodySmall,
+                    { color: palette.text, flex: 1, marginLeft: spacing.sm },
+                  ]}
+                >
+                  Personalized health recommendations
                 </Text>
               </View>
             </NCard>
@@ -1358,82 +1463,48 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
   },
 
-  appointment: {
+  featureCardsContainer: {
     gap: spacing.md,
-    backgroundColor: "#4F46E5",
-    borderColor: "#4F46E5",
-    padding: spacing.md,
-    borderRadius: radii.card,
-    ...shadows.md,
+    marginTop: spacing.sm,
   },
 
-  appointmentRow: {
-    flexDirection: "row",
-    alignItems: "center",
+  featureCard: {
+    borderWidth: 1,
+    borderRadius: radii.card,
+    padding: spacing.md,
     gap: spacing.sm,
   },
 
-  patientAvatar: {
-    width: 44,
-    height: 44,
-    borderRadius: radii.circle,
+  featureCardHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
   },
 
-  patientInfo: {
-    flex: 1,
-    gap: spacing.xxs,
-  },
-
-  patientMeta: {
-    ...typography.bodySmall,
-    color: "rgba(255,255,255,0.9)",
-  },
-
-  videoCallButton: {
-    width: 36,
-    height: 36,
-    borderRadius: radii.circle,
+  featureIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: radii.sm,
     alignItems: "center",
     justifyContent: "center",
   },
 
-  timePill: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs,
-    backgroundColor: "rgba(255,255,255,0.15)",
-    borderRadius: radii.pill,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    alignSelf: "flex-start",
+  cardFooter: {
+    marginTop: spacing.sm,
   },
 
-  tilesRow: {
-    flexDirection: "row",
+  appInfoSection: {
+    marginTop: spacing.lg,
+  },
+
+  infoCard: {
     gap: spacing.sm,
-    marginTop: spacing.md,
+    padding: spacing.md,
   },
 
-  progressGrid: {
+  infoItem: {
     flexDirection: "row",
-    gap: spacing.sm,
-    marginTop: spacing.md,
-  },
-
-  progressCard: {
-    flex: 1,
-    gap: spacing.sm,
-  },
-
-  activePlansCard: {
-    flex: 1,
-    gap: spacing.sm,
-  },
-
-  activePlansRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs,
+    alignItems: "flex-start",
   },
 
   loadingContainer: {

@@ -58,7 +58,7 @@ export default function SymptoScan() {
             duration: 450,
             easing: Easing.out(Easing.cubic),
           }}
-          style={[styles.card, { backgroundColor: palette.card }]}
+          style={[styles.card]}
         >
           <Text style={[styles.title, { color: palette.text }]}>
             SymptomScan Pro

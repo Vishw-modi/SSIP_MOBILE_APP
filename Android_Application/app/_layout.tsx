@@ -2,25 +2,35 @@ import { useFonts } from "expo-font";
 import { ClerkProvider } from "@clerk/clerk-expo";
 import { Slot } from "expo-router";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { LogBox, StatusBar, StyleSheet } from "react-native";
+import { Animated, LogBox, StatusBar, StyleSheet } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import { ThemeProvider, useTheme } from "@/context/theme-context";
 import { UserProvider } from "@/context/UserContext";
+import { useSplash } from "@/hooks/use-splash-screen";
+import CustomSplashScreen from "@/components/ApplicationSplashScreen";
+import { ScrollAwareStatusBar } from "@/components/ApplicationStatusBar";
+import { useRef } from "react";
 
 // Inner component that uses theme
 function ThemedApp() {
   const { palette, isDark } = useTheme();
-
+  const { showSplash } = useSplash(3700);
+  const scorllY = useRef(new Animated.Value(0)).current;
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: palette.bg }]}
       edges={["top"]}
     >
+      <ScrollAwareStatusBar scrollY={scorllY} />
       <StatusBar
         barStyle={isDark ? "light-content" : "dark-content"}
         backgroundColor={palette.bg}
       />
-      <Slot />
+      {showSplash ? (
+        <CustomSplashScreen onAnimationComplete={() => {}} />
+      ) : (
+        <Slot />
+      )}
     </SafeAreaView>
   );
 }
@@ -60,7 +70,10 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        <ClerkProvider tokenCache={tokenCache}>
+        <ClerkProvider
+          publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}
+          tokenCache={tokenCache}
+        >
           <UserProvider>
             <ThemedApp />
           </UserProvider>

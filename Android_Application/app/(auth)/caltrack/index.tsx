@@ -15,6 +15,7 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { MotiView, MotiText } from "moti";
 import { useCaltrack } from "@/context/caltrack-context";
+import { useTheme } from "@/context/theme-context";
 
 import { BACKEND_URL } from "../../../src/chat/config";
 import { router } from "expo-router";
@@ -41,15 +42,8 @@ interface NutritionResponse {
   suggestions: string[];
 }
 
-const COLORS = {
-  primary: "#007AFF", // brand blue
-  accent: "#34C759", // success green
-  bg: "#F8FAFC", // app background
-  card: "#FFFFFF", // surfaces/cards
-  text: "#1F2937", // slate-800
-};
-
 function NutritionAnalyzer() {
+  const { palette, isDark } = useTheme();
   const {
     userInput,
     setUserInput,
@@ -91,7 +85,7 @@ function NutritionAnalyzer() {
         },
         {
           text: "Take Photo",
-          onPress: () => router.push("/caltrack/camerascreen"), // navigates to your camera screen
+          onPress: () => router.push("/caltrack/camerascreen"),
         },
         { text: "Cancel", style: "cancel" },
       ],
@@ -131,8 +125,6 @@ function NutritionAnalyzer() {
       const result = await response.json();
 
       if (response.ok) {
-        // console.log("result received", result);
-
         if (result.points) {
           setResponsePoints(result.points);
         }
@@ -154,16 +146,18 @@ function NutritionAnalyzer() {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { backgroundColor: palette.bg }]}>
       <MotiView
         from={{ opacity: 0, translateY: -20 }}
         animate={{ opacity: 1, translateY: 0 }}
         transition={{ type: "timing", duration: 800 }}
         style={{ marginBottom: 8 }}
       >
-        <Text style={styles.title}>Your Nutrition Analyzer</Text>
-        <Text style={styles.subtitle}>
-          Upload a clear photo of your meal or snap a new one. We’ll estimate
+        <Text style={[styles.title, { color: palette.text }]}>
+          Your Nutrition Analyzer
+        </Text>
+        <Text style={[styles.subtitle, { color: palette.textSecondary }]}>
+          Upload a clear photo of your meal or snap a new one. We'll estimate
           calories, macronutrients, micronutrients, and provide a quick health
           assessment with suggestions.
         </Text>
@@ -173,16 +167,22 @@ function NutritionAnalyzer() {
         from={{ opacity: 0, translateY: -8 }}
         animate={{ opacity: 1, translateY: 0 }}
         transition={{ type: "timing", duration: 500, delay: 150 }}
-        style={styles.helperBox}
+        style={[
+          styles.helperBox,
+          {
+            backgroundColor: palette.primaryBg,
+            borderColor: palette.primaryBorder,
+          },
+        ]}
       >
-        <Text style={styles.helperItem}>
+        <Text style={[styles.helperItem, { color: palette.text }]}>
           • Best results with one dish centered, in focus
         </Text>
-        <Text style={styles.helperItem}>
+        <Text style={[styles.helperItem, { color: palette.text }]}>
           • Good lighting and minimal clutter
         </Text>
-        <Text style={styles.helperItem}>
-          • Optional notes like “no sauce” or “half portion”
+        <Text style={[styles.helperItem, { color: palette.text }]}>
+          • Optional notes like "no sauce" or "half portion"
         </Text>
       </MotiView>
 
@@ -192,11 +192,18 @@ function NutritionAnalyzer() {
         transition={{ type: "timing", duration: 400, delay: 200 }}
       >
         <TextInput
-          style={styles.input}
+          style={[
+            styles.input,
+            {
+              backgroundColor: palette.card,
+              borderColor: palette.border,
+              color: palette.text,
+            },
+          ]}
           placeholder="Add notes or instructions (optional)"
+          placeholderTextColor={palette.textMuted}
           value={userInput}
           onChangeText={setUserInput}
-          placeholderTextColor="rgba(31,41,55,0.6)"
         />
       </MotiView>
 
@@ -208,7 +215,14 @@ function NutritionAnalyzer() {
         <TouchableOpacity
           onPress={pickImage}
           disabled={loading}
-          style={[styles.uploadCard, loading && { opacity: 0.7 }]}
+          style={[
+            styles.uploadCard,
+            {
+              backgroundColor: palette.card,
+              borderColor: palette.primary,
+            },
+            loading && { opacity: 0.7 },
+          ]}
           accessibilityRole="button"
           accessibilityLabel="Upload or change food photo"
         >
@@ -216,8 +230,12 @@ function NutritionAnalyzer() {
             <Image source={{ uri: photo.uri }} style={styles.uploadImage} />
           ) : (
             <View style={styles.uploadPlaceholder}>
-              <Text style={styles.uploadTitle}>Tap to upload a food photo</Text>
-              <Text style={styles.uploadCaption}>
+              <Text style={[styles.uploadTitle, { color: palette.text }]}>
+                Tap to upload a food photo
+              </Text>
+              <Text
+                style={[styles.uploadCaption, { color: palette.textMuted }]}
+              >
                 JPG or PNG · Clear, well‑lit image
               </Text>
             </View>
@@ -235,12 +253,16 @@ function NutritionAnalyzer() {
           style={[
             styles.button,
             styles.secondaryButton,
+            {
+              backgroundColor: palette.card,
+              borderColor: palette.border,
+            },
             loading && styles.disabledButton,
           ]}
           onPress={chooseFromGallery}
           disabled={loading}
         >
-          <Text style={[styles.buttonText, styles.secondaryButtonText]}>
+          <Text style={[styles.buttonText, { color: palette.primary }]}>
             Choose from Gallery
           </Text>
         </TouchableOpacity>
@@ -249,12 +271,16 @@ function NutritionAnalyzer() {
           style={[
             styles.button,
             styles.secondaryButton,
+            {
+              backgroundColor: palette.card,
+              borderColor: palette.border,
+            },
             loading && styles.disabledButton,
           ]}
           onPress={() => router.push("/caltrack/camerascreen")}
           disabled={loading}
         >
-          <Text style={[styles.buttonText, styles.secondaryButtonText]}>
+          <Text style={[styles.buttonText, { color: palette.primary }]}>
             Take Photo
           </Text>
         </TouchableOpacity>
@@ -269,6 +295,7 @@ function NutritionAnalyzer() {
           style={[
             styles.button,
             styles.analyzeButton,
+            { backgroundColor: palette.accent },
             loading && styles.disabledButton,
           ]}
           onPress={analyzeNutrition}
@@ -288,7 +315,7 @@ function NutritionAnalyzer() {
         >
           <ActivityIndicator
             size="large"
-            color={COLORS.primary}
+            color={palette.primary}
             style={{ marginTop: 16 }}
           />
         </MotiView>
@@ -300,8 +327,8 @@ function NutritionAnalyzer() {
           animate={{ opacity: 1 }}
           transition={{ type: "timing", duration: 300 }}
         >
-          <Text style={styles.noDataText}>
-            We couldn’t detect a recognizable dish. Try a clear, well‑lit photo
+          <Text style={[styles.noDataText, { color: palette.text }]}>
+            We couldn't detect a recognizable dish. Try a clear, well‑lit photo
             where the food fills most of the frame.
           </Text>
         </MotiView>
@@ -312,13 +339,19 @@ function NutritionAnalyzer() {
           from={{ opacity: 0, translateY: 30 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ type: "timing", duration: 800, delay: 300 }}
-          style={styles.nutritionCard}
+          style={[
+            styles.nutritionCard,
+            {
+              backgroundColor: palette.card,
+              borderColor: palette.border,
+            },
+          ]}
         >
           <MotiText
             from={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 200 }}
-            style={styles.foodName}
+            style={[styles.foodName, { color: palette.text }]}
           >
             {nutritionData.foodName
               ? nutritionData.foodName
@@ -329,9 +362,12 @@ function NutritionAnalyzer() {
             from={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 280 }}
-            style={styles.caloriesContainer}
+            style={[
+              styles.caloriesContainer,
+              { backgroundColor: palette.accentBg },
+            ]}
           >
-            <Text style={styles.caloriesText}>
+            <Text style={[styles.caloriesText, { color: palette.accent }]}>
               {nutritionData.calories} calories
             </Text>
           </MotiView>
@@ -342,17 +378,60 @@ function NutritionAnalyzer() {
             transition={{ delay: 350 }}
             style={styles.macroContainer}
           >
-            <Text style={styles.sectionTitle}>Macronutrients</Text>
-            <View style={styles.macroRow}>
-              <Text style={styles.macroText}>
-                Protein: {nutritionData.macronutrients.protein}g
-              </Text>
-              <Text style={styles.macroText}>
-                Carbs: {nutritionData.macronutrients.carbohydrates}g
-              </Text>
-              <Text style={styles.macroText}>
-                Fat: {nutritionData.macronutrients.fat}g
-              </Text>
+            <Text style={[styles.sectionTitle, { color: palette.text }]}>
+              Macronutrients
+            </Text>
+            <View style={styles.macroCardsRow}>
+              <View
+                style={[
+                  styles.macroCard,
+                  {
+                    backgroundColor: palette.bgSecondary,
+                    borderColor: palette.border,
+                  },
+                ]}
+              >
+                <Text style={[styles.macroLabel, { color: palette.textMuted }]}>
+                  Protein
+                </Text>
+                <Text style={[styles.macroValue, { color: palette.primary }]}>
+                  {nutritionData.macronutrients.protein}g
+                </Text>
+              </View>
+
+              <View
+                style={[
+                  styles.macroCard,
+                  {
+                    backgroundColor: palette.bgSecondary,
+                    borderColor: palette.border,
+                  },
+                ]}
+              >
+                <Text style={[styles.macroLabel, { color: palette.textMuted }]}>
+                  Carbs
+                </Text>
+                <Text style={[styles.macroValue, { color: palette.primary }]}>
+                  {nutritionData.macronutrients.carbohydrates}g
+                </Text>
+              </View>
+
+              <View
+                style={[
+                  styles.macroCard,
+                  {
+                    backgroundColor: palette.bgSecondary,
+                    borderColor: palette.border,
+                  },
+                ]}
+              >
+                <Text style={[styles.macroLabel, { color: palette.textMuted }]}>
+                  Fat
+                </Text>
+                <Text style={[styles.macroValue, { color: palette.primary }]}>
+                  {nutritionData.macronutrients.fat}g
+                </Text>
+              </View>
             </View>
           </MotiView>
 
@@ -362,47 +441,171 @@ function NutritionAnalyzer() {
             transition={{ delay: 420 }}
             style={styles.microContainer}
           >
-            <Text style={styles.sectionTitle}>Micronutrients</Text>
+            <Text style={[styles.sectionTitle, { color: palette.text }]}>
+              Micronutrients
+            </Text>
 
             <View style={styles.microGrid}>
-              <Text style={styles.microText}>
-                Fiber: {nutritionData.micronutrients.fiber ?? "N/A"}g
-              </Text>
-              <Text style={styles.microText}>
-                Sodium: {nutritionData.micronutrients.sodium ?? "N/A"}mg
-              </Text>
-              <Text style={styles.microText}>
-                Sugar: {nutritionData.micronutrients.sugar ?? "N/A"}g
-              </Text>
-              <Text style={styles.microText}>
-                Calcium: {nutritionData.micronutrients.calcium ?? "N/A"}mg
-              </Text>
-              <Text style={styles.microText}>
-                Iron: {nutritionData.micronutrients.iron ?? "N/A"}mg
-              </Text>
-              <Text style={styles.microText}>
-                Phosphorus: {nutritionData.micronutrients.phosphorus ?? "N/A"}mg
-              </Text>
-              <Text style={styles.microText}>
-                Potassium: {nutritionData.micronutrients.potassium ?? "N/A"}mg
-              </Text>
+              <View
+                style={[
+                  styles.microCard,
+                  {
+                    backgroundColor: palette.bgSecondary,
+                    borderColor: palette.border,
+                  },
+                ]}
+              >
+                <Text style={[styles.microLabel, { color: palette.textMuted }]}>
+                  Fiber
+                </Text>
+                <Text style={[styles.microValue, { color: palette.text }]}>
+                  {nutritionData.micronutrients.fiber ?? "N/A"}g
+                </Text>
+              </View>
+
+              <View
+                style={[
+                  styles.microCard,
+                  {
+                    backgroundColor: palette.bgSecondary,
+                    borderColor: palette.border,
+                  },
+                ]}
+              >
+                <Text style={[styles.microLabel, { color: palette.textMuted }]}>
+                  Sodium
+                </Text>
+                <Text style={[styles.microValue, { color: palette.text }]}>
+                  {nutritionData.micronutrients.sodium ?? "N/A"}mg
+                </Text>
+              </View>
+
+              <View
+                style={[
+                  styles.microCard,
+                  {
+                    backgroundColor: palette.bgSecondary,
+                    borderColor: palette.border,
+                  },
+                ]}
+              >
+                <Text style={[styles.microLabel, { color: palette.textMuted }]}>
+                  Sugar
+                </Text>
+                <Text style={[styles.microValue, { color: palette.text }]}>
+                  {nutritionData.micronutrients.sugar ?? "N/A"}g
+                </Text>
+              </View>
+
+              <View
+                style={[
+                  styles.microCard,
+                  {
+                    backgroundColor: palette.bgSecondary,
+                    borderColor: palette.border,
+                  },
+                ]}
+              >
+                <Text style={[styles.microLabel, { color: palette.textMuted }]}>
+                  Calcium
+                </Text>
+                <Text style={[styles.microValue, { color: palette.text }]}>
+                  {nutritionData.micronutrients.calcium ?? "N/A"}mg
+                </Text>
+              </View>
+
+              <View
+                style={[
+                  styles.microCard,
+                  {
+                    backgroundColor: palette.bgSecondary,
+                    borderColor: palette.border,
+                  },
+                ]}
+              >
+                <Text style={[styles.microLabel, { color: palette.textMuted }]}>
+                  Iron
+                </Text>
+                <Text style={[styles.microValue, { color: palette.text }]}>
+                  {nutritionData.micronutrients.iron ?? "N/A"}mg
+                </Text>
+              </View>
+
+              <View
+                style={[
+                  styles.microCard,
+                  {
+                    backgroundColor: palette.bgSecondary,
+                    borderColor: palette.border,
+                  },
+                ]}
+              >
+                <Text style={[styles.microLabel, { color: palette.textMuted }]}>
+                  Phosphorus
+                </Text>
+                <Text style={[styles.microValue, { color: palette.text }]}>
+                  {nutritionData.micronutrients.phosphorus ?? "N/A"}mg
+                </Text>
+              </View>
+
+              <View
+                style={[
+                  styles.microCard,
+                  {
+                    backgroundColor: palette.bgSecondary,
+                    borderColor: palette.border,
+                  },
+                ]}
+              >
+                <Text style={[styles.microLabel, { color: palette.textMuted }]}>
+                  Potassium
+                </Text>
+                <Text style={[styles.microValue, { color: palette.text }]}>
+                  {nutritionData.micronutrients.potassium ?? "N/A"}mg
+                </Text>
+              </View>
             </View>
 
-            <Text style={styles.microVitamins}>
-              {nutritionData.micronutrients.vitamins?.length
-                ? nutritionData.micronutrients.vitamins.join(", ")
-                : "Vitamins: N/A"}
-            </Text>
+            {nutritionData.micronutrients.vitamins?.length > 0 && (
+              <View
+                style={[
+                  styles.vitaminsCard,
+                  {
+                    backgroundColor: palette.primaryBg,
+                    borderColor: palette.primaryBorder,
+                  },
+                ]}
+              >
+                <Text
+                  style={[styles.vitaminLabel, { color: palette.textMuted }]}
+                >
+                  Vitamins
+                </Text>
+                <Text style={[styles.vitaminValue, { color: palette.primary }]}>
+                  {nutritionData.micronutrients.vitamins.join(", ")}
+                </Text>
+              </View>
+            )}
           </MotiView>
 
           <MotiView
             from={{ opacity: 0, translateY: 16 }}
             animate={{ opacity: 1, translateY: 0 }}
             transition={{ delay: 480 }}
-            style={styles.assessmentContainer}
+            style={[
+              styles.assessmentContainer,
+              {
+                backgroundColor: palette.bgSecondary,
+                borderColor: palette.border,
+              },
+            ]}
           >
-            <Text style={styles.sectionTitle}>Health Assessment</Text>
-            <Text style={styles.assessmentText}>
+            <Text style={[styles.sectionTitle, { color: palette.text }]}>
+              Health Assessment
+            </Text>
+            <Text
+              style={[styles.assessmentText, { color: palette.textSecondary }]}
+            >
               {nutritionData.healthAssessment}
             </Text>
           </MotiView>
@@ -413,11 +616,25 @@ function NutritionAnalyzer() {
                 from={{ opacity: 0, translateY: 12 }}
                 animate={{ opacity: 1, translateY: 0 }}
                 transition={{ delay: 520 }}
-                style={styles.suggestionsContainer}
+                style={[
+                  styles.suggestionsContainer,
+                  {
+                    backgroundColor: palette.primaryBg,
+                    borderColor: palette.primaryBorder,
+                  },
+                ]}
               >
-                <Text style={styles.sectionTitle}>Suggestions</Text>
+                <Text style={[styles.sectionTitle, { color: palette.text }]}>
+                  Suggestions
+                </Text>
                 {nutritionData.suggestions.map((suggestion, idx) => (
-                  <Text key={idx} style={styles.suggestionText}>
+                  <Text
+                    key={idx}
+                    style={[
+                      styles.suggestionText,
+                      { color: palette.textSecondary },
+                    ]}
+                  >
                     • {suggestion}
                   </Text>
                 ))}
@@ -431,7 +648,7 @@ function NutritionAnalyzer() {
         animate={{ opacity: 1 }}
         transition={{ type: "timing", duration: 300, delay: 200 }}
       >
-        <Text style={styles.disclaimer}>
+        <Text style={[styles.disclaimer, { color: palette.textMuted }]}>
           Estimates are generated from the photo and may vary. For personalized
           medical or dietary advice, consult a professional.
         </Text>
@@ -448,7 +665,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: COLORS.bg,
     marginBottom: 20,
   },
   title: {
@@ -456,40 +672,32 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     marginBottom: 8,
     textAlign: "left",
-    color: COLORS.text,
   },
   subtitle: {
     fontSize: 14,
-    color: "rgba(31,41,55,0.8)",
     lineHeight: 20,
     marginBottom: 8,
   },
   helperBox: {
-    backgroundColor: "rgba(0,122,255,0.06)", // primary tint
     borderRadius: 12,
+    borderWidth: 1,
     padding: 12,
     marginBottom: 12,
   },
   helperItem: {
     fontSize: 13,
-    color: COLORS.text,
     marginBottom: 4,
   },
   input: {
     borderWidth: 1,
-    borderColor: "rgba(31,41,55,0.12)",
     padding: 14,
     marginVertical: 10,
     borderRadius: 12,
-    backgroundColor: COLORS.card,
     fontSize: 16,
-    color: COLORS.text,
   },
   uploadCard: {
-    backgroundColor: COLORS.card,
     borderRadius: 16,
-    borderWidth: 1,
-    borderColor: COLORS.primary,
+    borderWidth: 2,
     borderStyle: "dashed",
     overflow: "hidden",
     minHeight: 180,
@@ -513,12 +721,10 @@ const styles = StyleSheet.create({
   uploadTitle: {
     fontSize: 16,
     fontWeight: "700",
-    color: COLORS.text,
     marginBottom: 4,
   },
   uploadCaption: {
     fontSize: 12,
-    color: "rgba(31,41,55,0.7)",
   },
   uploadRow: {
     marginTop: 12,
@@ -533,17 +739,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   secondaryButton: {
-    backgroundColor: COLORS.card,
     borderWidth: 1,
-    borderColor: "rgba(31,41,55,0.12)",
   },
-  secondaryButtonText: {
-    color: COLORS.primary,
+  buttonText: {
     fontSize: 15,
     fontWeight: "700",
   },
   analyzeButton: {
-    backgroundColor: COLORS.accent,
     marginTop: 12,
   },
   disabledButton: {
@@ -557,17 +759,14 @@ const styles = StyleSheet.create({
   noDataText: {
     fontSize: 14,
     fontWeight: "600",
-    color: COLORS.text,
     textAlign: "left",
     marginTop: 12,
   },
   nutritionCard: {
-    backgroundColor: COLORS.card,
     borderRadius: 16,
+    borderWidth: 1,
     padding: 16,
     marginTop: 16,
-    borderWidth: 1,
-    borderColor: "rgba(31,41,55,0.08)",
     shadowColor: "#000",
     shadowOpacity: 0.06,
     shadowRadius: 10,
@@ -577,12 +776,10 @@ const styles = StyleSheet.create({
   foodName: {
     fontSize: 20,
     fontWeight: "800",
-    color: COLORS.text,
     textAlign: "left",
     marginBottom: 12,
   },
   caloriesContainer: {
-    backgroundColor: "rgba(52,199,89,0.12)", // accent tint
     borderRadius: 12,
     padding: 14,
     marginBottom: 16,
@@ -591,56 +788,79 @@ const styles = StyleSheet.create({
   caloriesText: {
     fontSize: 18,
     fontWeight: "800",
-    color: COLORS.accent,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: "800",
-    color: COLORS.text,
-    marginBottom: 8,
+    marginBottom: 12,
   },
   macroContainer: {
     marginBottom: 16,
   },
-  macroRow: {
+  macroCardsRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    backgroundColor: COLORS.bg,
-    borderRadius: 10,
-    padding: 12,
+    gap: 10,
   },
-  macroText: {
-    fontSize: 13,
-    fontWeight: "700",
-    color: "rgba(31,41,55,0.9)",
+  macroCard: {
+    flex: 1,
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  macroLabel: {
+    fontSize: 12,
+    fontWeight: "600",
+    marginBottom: 6,
+  },
+  macroValue: {
+    fontSize: 16,
+    fontWeight: "800",
   },
   microContainer: {
     marginBottom: 16,
-    padding: 12,
-    backgroundColor: COLORS.bg,
-    borderRadius: 12,
   },
   microGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "space-between",
-    marginTop: 4,
-    marginBottom: 8,
-    gap: 6,
+    gap: 10,
+    marginBottom: 12,
   },
-  microText: {
+  microCard: {
     width: "48%",
-    fontSize: 12,
-    marginBottom: 6,
-    color: COLORS.text,
-    fontWeight: "600",
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 12,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  microVitamins: {
+  microLabel: {
+    fontSize: 11,
+    fontWeight: "600",
+    marginBottom: 6,
+  },
+  microValue: {
+    fontSize: 14,
+    fontWeight: "800",
+  },
+  vitaminsCard: {
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 8,
+  },
+  vitaminLabel: {
     fontSize: 12,
-    color: "rgba(31,41,55,0.85)",
+    fontWeight: "600",
+    marginBottom: 4,
+  },
+  vitaminValue: {
+    fontSize: 13,
+    fontWeight: "700",
   },
   assessmentContainer: {
-    backgroundColor: "rgba(31,41,55,0.04)",
+    borderWidth: 1,
     borderRadius: 10,
     padding: 12,
     marginTop: 4,
@@ -648,37 +868,20 @@ const styles = StyleSheet.create({
   },
   assessmentText: {
     fontSize: 13,
-    color: "rgba(31,41,55,0.9)",
     lineHeight: 20,
   },
   suggestionsContainer: {
-    backgroundColor: "rgba(0,122,255,0.06)",
+    borderWidth: 1,
     borderRadius: 10,
     padding: 12,
   },
   suggestionText: {
     fontSize: 13,
-    color: COLORS.text,
     marginBottom: 6,
     lineHeight: 18,
   },
-  resultContainer: {
-    marginTop: 16,
-    backgroundColor: COLORS.card,
-    borderRadius: 12,
-    padding: 15,
-    borderWidth: 1,
-    borderColor: "rgba(31,41,55,0.08)",
-  },
-  resultText: {
-    fontSize: 15,
-    marginBottom: 8,
-    color: COLORS.text,
-    lineHeight: 22,
-  },
   disclaimer: {
     fontSize: 12,
-    color: "rgba(31,41,55,0.7)",
     marginTop: 18,
     marginBottom: 8,
     lineHeight: 18,
