@@ -63,19 +63,7 @@ export default function WelcomeScreen() {
           return;
         }
 
-        const storedTime = await AsyncStorage.getItem(
-          "dailyQuestionsOnboardingTime"
-        );
-        const needsDailyQuestions =
-          !storedTime ||
-          isNaN(new Date(storedTime).getTime()) ||
-          (Date.now() - new Date(storedTime).getTime()) / (1000 * 60 * 60) > 24;
-
-        if (needsDailyQuestions) {
-          router.replace("/(auth)/(onboarding)/(daily-questions)/q-1");
-        } else {
-          router.replace("/home");
-        }
+        router.replace("/home");
       } catch (err) {
         console.error("Error:", err);
       } finally {

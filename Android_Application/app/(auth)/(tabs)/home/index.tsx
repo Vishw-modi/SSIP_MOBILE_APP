@@ -837,7 +837,7 @@ export default function HomeScreen() {
     },
     greet: {
       ...typography.bodyLarge,
-      color: palette.textMuted,
+      color: palette.primary,
       fontWeight: "600",
     },
     headline: {

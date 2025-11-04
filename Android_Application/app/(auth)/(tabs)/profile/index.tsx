@@ -272,44 +272,6 @@ export default function ProfileScreen() {
           <Text style={dynamicStyles.name}>
             {user?.fullName || userDetails.fullName || "Dr. Professional"}
           </Text>
-
-          <Text style={dynamicStyles.specialization}>
-            {userDetails.specialization}
-          </Text>
-
-          <View style={styles.locationRow}>
-            <Ionicons
-              name="location-outline"
-              size={16}
-              color={palette.textMuted}
-            />
-            <Text style={dynamicStyles.location}>Dubai, UAE</Text>
-          </View>
-        </View>
-
-        {/* Enhanced Stats Row with better visual hierarchy */}
-        <View style={dynamicStyles.statsContainer}>
-          <View style={styles.statItem}>
-            <Text style={dynamicStyles.statNumber}>
-              {userDetails.totalConsultations}
-            </Text>
-            <Text style={dynamicStyles.statLabel}>Consultations</Text>
-          </View>
-          <View style={dynamicStyles.statDivider} />
-          <View style={styles.statItem}>
-            <Text style={dynamicStyles.statNumber}>
-              {userDetails.activeClients}
-            </Text>
-            <Text style={dynamicStyles.statLabel}>Active Clients</Text>
-          </View>
-          <View style={dynamicStyles.statDivider} />
-          <View style={styles.statItem}>
-            <View style={styles.ratingRow}>
-              <Text style={dynamicStyles.statNumber}>{userDetails.rating}</Text>
-              <Ionicons name="star" size={16} color="#FFD700" />
-            </View>
-            <Text style={dynamicStyles.statLabel}>Rating</Text>
-          </View>
         </View>
 
         {/* Action Buttons */}
@@ -320,148 +282,19 @@ export default function ProfileScreen() {
             style={styles.editButton}
             onPress={navigateToEditProfile}
           />
-          <Pressable style={dynamicStyles.shareButton}>
-            <Ionicons name="share-outline" size={20} color={palette.primary} />
-          </Pressable>
         </View>
       </View>
 
       {/* Enhanced Bio Section */}
       <NCard style={styles.bioCard}>
         <Text style={dynamicStyles.sectionTitle}>About</Text>
-        <Text style={dynamicStyles.bioText}>{userDetails.bio}</Text>
 
         <View style={styles.detailsGrid}>
-          <View style={styles.detailItem}>
-            <Ionicons
-              name="briefcase-outline"
-              size={16}
-              color={palette.primary}
-            />
-            <Text style={dynamicStyles.detailText}>
-              Experience: {userDetails.experience}
-            </Text>
-          </View>
           <View style={styles.detailItem}>
             <Ionicons name="person-outline" size={16} color={palette.primary} />
             <Text style={dynamicStyles.detailText}>
               Age: {userDetails.age || "N/A"}
             </Text>
-          </View>
-          <View style={styles.detailItem}>
-            <Ionicons name="school-outline" size={16} color={palette.primary} />
-            <Text style={dynamicStyles.detailText}>Certified Nutritionist</Text>
-          </View>
-        </View>
-      </NCard>
-
-      {/* Enhanced Quick Actions */}
-      <NCard style={styles.quickActionsCard}>
-        <Text style={dynamicStyles.sectionTitle}>Quick Actions</Text>
-
-        <Pressable style={dynamicStyles.actionItem}>
-          <View style={dynamicStyles.actionIcon}>
-            <Ionicons
-              name="calendar-outline"
-              size={20}
-              color={palette.primary}
-            />
-          </View>
-          <View style={styles.actionContent}>
-            <Text style={dynamicStyles.actionTitle}>Schedule Management</Text>
-            <Text style={dynamicStyles.actionSubtitle}>
-              Manage your appointments
-            </Text>
-          </View>
-          <Ionicons
-            name="chevron-forward"
-            size={20}
-            color={palette.textMuted}
-          />
-        </Pressable>
-
-        <Pressable style={dynamicStyles.actionItem}>
-          <View style={dynamicStyles.actionIcon}>
-            <Ionicons
-              name="document-text-outline"
-              size={20}
-              color={palette.primary}
-            />
-          </View>
-          <View style={styles.actionContent}>
-            <Text style={dynamicStyles.actionTitle}>Client Reports</Text>
-            <Text style={dynamicStyles.actionSubtitle}>
-              View progress reports
-            </Text>
-          </View>
-          <Ionicons
-            name="chevron-forward"
-            size={20}
-            color={palette.textMuted}
-          />
-        </Pressable>
-
-        <Pressable style={dynamicStyles.actionItem}>
-          <View style={dynamicStyles.actionIcon}>
-            <Ionicons
-              name="analytics-outline"
-              size={20}
-              color={palette.primary}
-            />
-          </View>
-          <View style={styles.actionContent}>
-            <Text style={dynamicStyles.actionTitle}>Analytics</Text>
-            <Text style={dynamicStyles.actionSubtitle}>
-              View your performance
-            </Text>
-          </View>
-          <Ionicons
-            name="chevron-forward"
-            size={20}
-            color={palette.textMuted}
-          />
-        </Pressable>
-      </NCard>
-
-      {/* Enhanced Achievement/Badges Section */}
-      <NCard style={styles.achievementsCard}>
-        <Text style={dynamicStyles.sectionTitle}>Achievements</Text>
-
-        <View style={styles.badgesGrid}>
-          <View style={styles.badge}>
-            <View
-              style={[
-                styles.badgeIcon,
-                { backgroundColor: palette.success + "20" },
-              ]}
-            >
-              <Ionicons name="trophy" size={20} color={palette.success} />
-            </View>
-            <Text style={dynamicStyles.badgeTitle}>Top Rated</Text>
-          </View>
-
-          <View style={styles.badge}>
-            <View
-              style={[
-                styles.badgeIcon,
-                { backgroundColor: palette.info + "20" },
-              ]}
-            >
-              <Ionicons name="people" size={20} color={palette.info} />
-            </View>
-            <Text style={dynamicStyles.badgeTitle}>100+ Clients</Text>
-          </View>
-
-          <View style={styles.badge}>
-            <View
-              style={[
-                styles.badgeIcon,
-                { backgroundColor: palette.warning + "20" },
-              ]}
-            >
-              <Ionicons name="star" size={20} color={palette.warning} />
-            </View>
-            <Text style={dynamicStyles.badgeTitle}>Expert</Text>
           </View>
         </View>
       </NCard>

@@ -2206,28 +2206,11 @@ export default function ChatBotScreen() {
           borderBottomWidth: 1,
         }}
       >
-        <Pressable
-          onPress={() => router.back()}
-          style={{
-            width: 36,
-            height: 36,
-            borderRadius: 12,
-            backgroundColor: themeColors.card,
-            alignItems: "center",
-            justifyContent: "center",
-            borderWidth: 1,
-            borderColor: themeColors.border,
-          }}
-          hitSlop={10}
-          android_ripple={{ color: "rgba(0,0,0,0.06)" }}
-        >
-          <Ionicons name="chevron-back" size={22} color={themeColors.text} />
-        </Pressable>
-
         <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-          <Image
-            source={require("../../../assets/images/nutrizy-logo.png")}
-            style={{ width: 28, height: 28, borderRadius: 14 }}
+          <Ionicons
+            name="chatbubble-ellipses-sharp"
+            size={24}
+            color={themeColors.primary}
           />
           <Text
             style={{

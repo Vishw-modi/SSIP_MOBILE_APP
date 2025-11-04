@@ -16,7 +16,7 @@ export function Segmented({
   const styles = StyleSheet.create({
     wrap: {
       flexDirection: "row",
-      backgroundColor: palette.bgSecondary,
+      backgroundColor: palette.primaryBg,
       padding: 4,
       borderRadius: radii.pill,
       alignSelf: "flex-start",
@@ -27,7 +27,7 @@ export function Segmented({
       borderRadius: radii.pill,
     },
     itemActive: {
-      backgroundColor: palette.card,
+      backgroundColor: palette.primary,
       shadowColor: palette.text,
       shadowOffset: { width: 0, height: 1 },
       shadowOpacity: 0.1,
@@ -41,7 +41,7 @@ export function Segmented({
     },
     labelActive: {
       ...typography.labelSmall,
-      color: palette.text,
+      color: "white",
       fontWeight: "700",
     },
   });

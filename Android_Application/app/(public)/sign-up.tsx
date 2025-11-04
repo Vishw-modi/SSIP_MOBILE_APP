@@ -181,7 +181,7 @@ export default function SignUpScreen() {
                     textAlign: "center",
                   }}
                 >
-                  Sign In
+                  Sign Up
                 </Text>
               )}
             </Pressable>

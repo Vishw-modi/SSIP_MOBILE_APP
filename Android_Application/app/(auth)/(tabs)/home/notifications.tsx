@@ -42,7 +42,7 @@ const DATA: Notice[] = [
 export default function NotificationsScreen() {
   const { palette } = useTheme();
   const [listData, setListData] = useState(DATA);
-
+  alert("Under development");
   // Helper to map icon bg colors using theme palette
   function getIconBackgroundColor(iconName: string): string {
     switch (iconName) {
@@ -151,6 +151,7 @@ export default function NotificationsScreen() {
         disableRightSwipe
         contentContainerStyle={{ backgroundColor: palette.bg, flexGrow: 1 }}
       />
+      <Text>UNDER DEVELOPMENT</Text>
     </View>
   );
 }

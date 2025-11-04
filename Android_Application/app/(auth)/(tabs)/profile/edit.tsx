@@ -5,9 +5,7 @@ export default function EditProfileScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.placeholder}>Edit Profile Screen</Text>
-      <Text style={styles.subtitle}>
-        Form fields for editing profile will go here
-      </Text>
+      <Text style={styles.subtitle}>UNDER DEVELOPMENT</Text>
     </View>
   );
 }

@@ -1,4 +1,5 @@
 import {
+  Alert,
   ScrollView,
   StyleSheet,
   Text,
@@ -74,62 +75,16 @@ export default function SettingsScreen() {
         </View>
       </View>
 
-      {/* Account settings section with Language, Country, Currency */}
-      <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: palette.text }]}>
-          Account settings
-        </Text>
-        <View style={[styles.card, { backgroundColor: palette.card }]}>
-          <TouchableOpacity style={styles.rowWithArrow}>
-            <View style={styles.rowContent}>
-              <Text style={[styles.rowLabel, { color: palette.text }]}>
-                Language
-              </Text>
-              <View style={styles.rowValue}>
-                <Text style={styles.flagEmoji}>🇺🇸</Text>
-                <Text style={[styles.valueText, { color: palette.textMuted }]}>
-                  English
-                </Text>
-              </View>
-            </View>
-            <Ionicons
-              name="chevron-forward"
-              size={20}
-              color={palette.textMuted}
-            />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              styles.rowWithArrow,
-              styles.rowBorder,
-              { borderTopColor: palette.border },
-            ]}
-          >
-            <View style={styles.rowContent}>
-              <Text style={[styles.rowLabel, { color: palette.text }]}>
-                Country
-              </Text>
-              <Text style={[styles.valueText, { color: palette.textMuted }]}>
-                Dubai
-              </Text>
-            </View>
-            <Ionicons
-              name="chevron-forward"
-              size={20}
-              color={palette.textMuted}
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
-
       {/* Support section with navigation arrows */}
       <View style={styles.section}>
         <Text style={[styles.sectionTitle, { color: palette.text }]}>
           Support
         </Text>
         <View style={[styles.card, { backgroundColor: palette.card }]}>
-          <TouchableOpacity style={styles.rowWithArrow}>
+          <TouchableOpacity
+            onPress={() => Alert.alert("Under Development")}
+            style={styles.rowWithArrow}
+          >
             <Text style={[styles.rowLabel, { color: palette.text }]}>
               Get help
             </Text>
@@ -141,6 +96,7 @@ export default function SettingsScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity
+            onPress={() => Alert.alert("Under Development")}
             style={[
               styles.rowWithArrow,
               styles.rowBorder,
@@ -165,7 +121,10 @@ export default function SettingsScreen() {
           Legal
         </Text>
         <View style={[styles.card, { backgroundColor: palette.card }]}>
-          <TouchableOpacity style={styles.rowWithArrow}>
+          <TouchableOpacity
+            style={styles.rowWithArrow}
+            onPress={() => Alert.alert("Under Development")}
+          >
             <Text style={[styles.rowLabel, { color: palette.text }]}>
               Terms of Service
             </Text>
@@ -177,6 +136,7 @@ export default function SettingsScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity
+            onPress={() => Alert.alert("Under Development")}
             style={[
               styles.rowWithArrow,
               styles.rowBorder,
