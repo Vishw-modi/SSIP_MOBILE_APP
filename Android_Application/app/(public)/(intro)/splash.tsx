@@ -17,12 +17,12 @@ export default function SplashScreen() {
     <View style={styles.root}>
       <View style={styles.logoWrap}>
         <Image
-          source={require("../../../assets/images/nutrizy-logo.png")}
+          source={require("../../(public)/../../assets/images/HealthVitals-AI.png")}
           style={styles.logo}
         />
         <Text style={styles.brand}>
-          {"Nutri"}
-          <Text style={styles.brandAccent}>{"zy"}</Text>
+          {"HealthVitals"}
+          <Text style={styles.brandAccent}>{"AI"}</Text>
         </Text>
       </View>
     </View>

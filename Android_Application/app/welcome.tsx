@@ -23,14 +23,12 @@ export default function WelcomeScreen() {
     let isActive = true;
 
     async function runCheck() {
-      // mark onboarding completed for the user
       AsyncStorage.setItem("hasCompletedOnboarding", "true");
 
-      if (!authLoaded || !userLoaded) return; // Wait for Clerk
-      if (!isSignedIn || !user) return setLoading(false); // Not signed in → just show welcome
+      if (!authLoaded || !userLoaded) return;
+      if (!isSignedIn || !user) return setLoading(false);
 
       try {
-        // Get or create user doc in Appwrite
         const res = await databases.listDocuments(
           DB_ID,
           USERS_DETAILS_COLLECTION_ID,
@@ -57,7 +55,6 @@ export default function WelcomeScreen() {
 
         if (!isActive) return;
 
-        // Routing logic
         if (!userDoc.onboardingComplete) {
           router.replace("/(auth)/(onboarding)/user-details");
           return;
@@ -72,7 +69,6 @@ export default function WelcomeScreen() {
     }
 
     runCheck();
-
     return () => {
       isActive = false;
     };
@@ -90,37 +86,38 @@ export default function WelcomeScreen() {
   if (!isSignedIn) {
     return (
       <View style={styles.container}>
+        {/* Top Section */}
         <View style={styles.top}>
           <Text style={styles.brand}>
-            Nutri<Text style={styles.brandAccent}>zy</Text>
+            HealthVitals<Text style={styles.brandAccent}>AI</Text>
           </Text>
+
           <Image
-            source={require("../assets/images/download.png")}
+            source={require("../assets/images/HealthVitals-AI.png")}
             resizeMode="contain"
-            style={styles.illustration}
+            style={styles.heroImage}
           />
-        </View>
-        <View style={styles.sheet}>
-          <Image
-            source={require("../assets/images/nutrizy-logo.png")}
-            style={styles.logo}
-          />
-          <Text style={styles.title}>Welcome to Nutrizy</Text>
+
+          <Text style={styles.title}>Welcome</Text>
           <Text style={styles.subtitle}>
-            The best App for doctor&apos;s to{"\n"}manage their practice.
+            Your personal AI-powered health & nutrition companion.
           </Text>
-          <View style={styles.divider} />
+        </View>
+
+        {/* Bottom Sheet */}
+        <View style={styles.sheet}>
           <NButton
             title="Sign In"
             fullWidth
-            style={{ backgroundColor: "#4F6EF7", borderRadius: 999 }}
+            style={styles.primaryBtn}
             onPress={() => router.push("/(public)/sign-in")}
           />
+
           <NButton
-            title="Register with Us"
+            title="Create Account"
             fullWidth
             variant="secondary"
-            style={{ borderRadius: 999 }}
+            style={styles.secondaryBtn}
             onPress={() => router.push("/(public)/sign-up")}
           />
         </View>
@@ -128,7 +125,7 @@ export default function WelcomeScreen() {
     );
   }
 
-  return null; // If signed in, routing will already happen
+  return null;
 }
 
 const styles = StyleSheet.create({
@@ -136,47 +133,78 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "#000",
   },
+
   container: {
     flex: 1,
-    backgroundColor: "#F6F8FF",
+    backgroundColor: "#000", // darker for modern design
   },
+
   top: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "flex-start",
-    paddingTop: spacing.xl,
+    justifyContent: "center",
+    paddingHorizontal: spacing.xl,
   },
+
   brand: {
-    fontSize: 22,
+    fontSize: 28,
     fontWeight: "800",
-    color: "#111827",
+    color: "#fff",
     marginBottom: spacing.lg,
   },
-  brandAccent: { color: "#34C759" },
-  illustration: {
-    width: "88%",
-    height: 220,
+  brandAccent: { color: palette.primary },
+
+  heroImage: {
+    width: 200,
+    height: 200,
+    borderRadius: 28,
+    marginBottom: spacing.xl,
+
+    // Pop-out effect
+    elevation: 14,
+    shadowColor: "#000",
+    shadowOpacity: 0.35,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 12 },
+
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.2)",
+    backgroundColor: "#111",
   },
+
+  title: {
+    fontSize: 24,
+    fontWeight: "800",
+    color: "#fff",
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 15,
+    color: "rgba(255,255,255,0.7)",
+    textAlign: "center",
+    lineHeight: 20,
+  },
+
   sheet: {
-    backgroundColor: "#fff",
+    backgroundColor: "#111",
     paddingHorizontal: spacing.xl,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.xl,
+    paddingVertical: spacing.xl,
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
-    elevation: 8,
-    gap: spacing.sm,
+    gap: spacing.md,
+    elevation: 20,
+    shadowColor: "#000",
   },
-  logo: { width: 36, height: 36, borderRadius: 8, marginBottom: spacing.sm },
-  title: { fontSize: 20, fontWeight: "800", color: palette.text },
-  subtitle: {
-    fontSize: 14,
-    lineHeight: 20,
-    color: palette.textMuted,
-    marginTop: 2,
-    marginBottom: spacing.md,
+
+  primaryBtn: {
+    backgroundColor: "#6366F1",
+    borderRadius: 999,
   },
-  divider: { height: 1, backgroundColor: "#E5E7EB", marginBottom: spacing.md },
+
+  secondaryBtn: {
+    borderRadius: 999,
+    borderColor: "#333",
+  },
 });

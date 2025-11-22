@@ -54,7 +54,7 @@ const Login = () => {
           <Ionicons name="chevron-back" size={22} color="#111827" />
         </Pressable>
         <Text style={styles.brand}>
-          Nutr<Text style={styles.brandAccent}>izy</Text>
+          HealthVitals <Text style={styles.brandAccent}>AI</Text>
         </Text>
         <View style={{ width: 36 }} />
       </View>

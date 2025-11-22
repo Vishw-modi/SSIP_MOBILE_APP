@@ -1,8 +1,13 @@
-import type React from "react";
-
-import type { ImageSourcePropType } from "react-native";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
-import { RelativePathString, useRouter } from "expo-router";
+import React from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Pressable,
+  ImageSourcePropType,
+} from "react-native";
+import { useRouter, RelativePathString } from "expo-router";
 import { palette, spacing, typography } from "@/design/styles";
 
 type Props = {
@@ -13,7 +18,7 @@ type Props = {
   total: number;
   nextHref?: string;
   skipHref?: string;
-  children?: React.ReactNode; // For custom CTA on the last slide
+  children?: React.ReactNode;
 };
 
 export default function OnboardingSlide({
@@ -31,104 +36,134 @@ export default function OnboardingSlide({
 
   return (
     <View style={styles.root}>
-      {/* Brand header */}
-      <View style={styles.header}>
-        <Text style={styles.brand}>
-          {"Nutri"}
-          <Text style={styles.brandAccent}>{"zy"}</Text>
-        </Text>
-      </View>
+      {/* Background */}
+      <Image source={image} style={styles.bg} />
+      <View style={styles.gradient} />
 
-      {/* Illustration */}
-      <Image source={image} resizeMode="cover" style={styles.hero} />
-
-      {/* Copy */}
-      <View style={styles.copy}>
+      <View style={styles.content}>
         <Text style={styles.headline}>{headline}</Text>
         {body ? <Text style={styles.body}>{body}</Text> : null}
-      </View>
-
-      {/* Pager + actions */}
-      <View style={styles.footer}>
-        {/* Skip */}
-        {skipHref ? (
-          <Pressable
-            onPress={() => router.replace(skipHref as RelativePathString)}
-            hitSlop={8}
-          >
-            <Text style={styles.skip}>Skip</Text>
-          </Pressable>
-        ) : (
-          <View />
-        )}
 
         {/* Dots */}
-        <View style={styles.dots}>
-          {dots.map((d) => {
-            const active = d === index;
-            return (
-              <View key={d} style={[styles.dot, active && styles.dotActive]} />
-            );
-          })}
+        <View style={styles.dotsRow}>
+          {dots.map((d) => (
+            <View
+              key={d}
+              style={[styles.dot, d === index && styles.dotActive]}
+            />
+          ))}
         </View>
 
-        {/* Next or custom children */}
-        {children ? (
-          <View style={{ width: 70 }} /> // spacer to balance layout when using custom CTAs below
-        ) : nextHref ? (
-          <Pressable
-            onPress={() => router.replace(nextHref as RelativePathString)}
-            style={styles.nextBtn}
-            hitSlop={8}
-          >
-            <Text style={styles.nextText}>Next</Text>
-          </Pressable>
-        ) : (
-          <View style={{ width: 70 }} />
-        )}
-      </View>
+        {/* Actions */}
+        <View style={styles.actions}>
+          {skipHref ? (
+            <Pressable onPress={() => router.replace(skipHref as any)}>
+              <Text style={styles.skip}>Skip</Text>
+            </Pressable>
+          ) : (
+            <View />
+          )}
 
-      {/* Custom CTA area (e.g., last slide) */}
-      {children ? <View style={styles.customCta}>{children}</View> : null}
+          {children ? (
+            <View style={{ width: 70 }} />
+          ) : nextHref ? (
+            <Pressable
+              onPress={() => router.replace(nextHref as any)}
+              style={styles.nextBtn}
+            >
+              <Text style={styles.nextText}>Next</Text>
+            </Pressable>
+          ) : (
+            <View style={{ width: 70 }} />
+          )}
+        </View>
+
+        {children && <View style={styles.customCta}>{children}</View>}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: "#FFFFFF" },
-  header: {
-    paddingTop: spacing.lg,
-    paddingHorizontal: spacing.xl,
-    paddingBottom: spacing.md,
+  root: {
+    flex: 1,
+    backgroundColor: "#000",
   },
-  brand: { fontWeight: "800", fontSize: 20, color: "#111827" },
-  brandAccent: { color: palette.primary },
-  hero: { width: "100%", height: 280, backgroundColor: "#F1F5F9" },
-  copy: { paddingHorizontal: spacing.xl, paddingTop: spacing.md },
-  headline: { ...typography.title, color: palette.text, marginBottom: 6 },
-  body: { color: "#475569", fontSize: 14 },
-  footer: {
-    marginTop: "auto",
-    paddingHorizontal: spacing.xl,
-    paddingBottom: spacing.lg,
+
+  bg: {
+    ...StyleSheet.absoluteFillObject,
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
+  },
+
+  gradient: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.45)",
+  },
+
+  content: {
+    flex: 1,
+    justifyContent: "flex-end",
+    padding: 28,
+  },
+
+  headline: {
+    ...typography.title,
+    color: "white",
+    textAlign: "left",
+    marginBottom: 8,
+  },
+
+  body: {
+    color: "rgba(255,255,255,0.8)",
+    fontSize: 15,
+    marginBottom: 30,
+  },
+
+  dotsRow: {
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    gap: 8,
+    marginBottom: 30,
+    alignSelf: "center",
   },
-  skip: { color: "#6B7280", fontSize: 14 },
-  dots: { flexDirection: "row", alignItems: "center", gap: 6 },
-  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: "#E2E8F0" },
-  dotActive: { backgroundColor: palette.primary },
+
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 999,
+    backgroundColor: "rgba(255,255,255,0.4)",
+  },
+  dotActive: {
+    backgroundColor: "white",
+    width: 10,
+    height: 10,
+  },
+
+  actions: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  skip: {
+    color: "rgba(255,255,255,0.8)",
+    fontSize: 15,
+  },
+
   nextBtn: {
-    backgroundColor: "#4F46E5",
-    paddingVertical: 10,
-    paddingHorizontal: 18,
+    backgroundColor: "#6366F1",
+    paddingVertical: 12,
+    paddingHorizontal: 24,
     borderRadius: 999,
   },
-  nextText: { color: "#fff", fontWeight: "700" },
+  nextText: {
+    color: "white",
+    fontWeight: "600",
+    fontSize: 16,
+  },
+
   customCta: {
-    paddingHorizontal: spacing.xl,
-    paddingBottom: spacing.xl,
-    gap: spacing.sm,
+    marginTop: 20,
   },
 });

@@ -868,7 +868,6 @@
 //     lineHeight: 16,
 //   },
 // });
-
 "use client";
 
 import type React from "react";
@@ -1486,6 +1485,14 @@ const Step5 = () => {
             </Text>
           </TouchableOpacity>
 
+          <TouchableOpacity
+            style={styles.backHomeButton}
+            onPress={() => router.replace("/(auth)/(tabs)/home")}
+          >
+            <Ionicons name="home" size={20} color="#FFFFFF" />
+            <Text style={styles.backHomeButtonText}>Back Home</Text>
+          </TouchableOpacity>
+
           {/* Disclaimer */}
           <View style={styles.disclaimer}>
             <Text style={styles.disclaimerTitle}>Disclaimer:</Text>
@@ -1765,6 +1772,22 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   downloadButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#FFFFFF",
+    marginLeft: 8,
+  },
+  backHomeButton: {
+    backgroundColor: "#3B82F6",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 16,
+    borderRadius: 12,
+    marginTop: 12,
+    marginBottom: 24,
+  },
+  backHomeButtonText: {
     fontSize: 16,
     fontWeight: "600",
     color: "#FFFFFF",

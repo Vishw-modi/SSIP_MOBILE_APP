@@ -12,6 +12,7 @@ import { spacing, typography, radii, shadows } from "@/design/styles";
 import { ThemeSelectionBottomSheet } from "@/components/ThemeSelectionModal";
 import { useRef } from "react";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import * as Linking from "expo-linking";
 
 export default function SettingsScreen() {
   const { theme, palette, isDark } = useTheme();
@@ -82,7 +83,9 @@ export default function SettingsScreen() {
         </Text>
         <View style={[styles.card, { backgroundColor: palette.card }]}>
           <TouchableOpacity
-            onPress={() => Alert.alert("Under Development")}
+            onPress={() =>
+              Linking.openURL("https://health-vitals-ai.vercel.app/")
+            }
             style={styles.rowWithArrow}
           >
             <Text style={[styles.rowLabel, { color: palette.text }]}>
@@ -96,7 +99,9 @@ export default function SettingsScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => Alert.alert("Under Development")}
+            onPress={() =>
+              Linking.openURL("https://health-vitals-ai.vercel.app/")
+            }
             style={[
               styles.rowWithArrow,
               styles.rowBorder,

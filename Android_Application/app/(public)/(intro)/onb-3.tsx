@@ -6,8 +6,8 @@ import { palette } from "@/design/styles";
 export default function Onboarding4() {
   return (
     <OnboardingSlide
-      image={require("../../../assets/images/download.png")}
-      headline="Simple steps to a healthier, newer you."
+      image={require("../../../assets/images/9th.png")}
+      headline="Smart Meal Analysis With Just a Photo."
       index={2}
       total={3}
       skipHref="/welcome"
@@ -37,9 +37,17 @@ const styles = StyleSheet.create({
   },
   primaryText: { color: "#fff", fontWeight: "700" },
   secondary: {
-    backgroundColor: "#FFFFFF",
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
+    backgroundColor: "#4F46E5",
+    paddingVertical: 14,
+    borderRadius: 999,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 6,
   },
-  secondaryText: { color: "#111827", fontWeight: "700" },
+
+  secondaryText: { color: "white", fontWeight: "700" },
 });

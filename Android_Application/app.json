@@ -34,7 +34,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/favicon.jpeg",
+          "image": "./assets/images/HealthVitals-AI.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
@@ -48,7 +48,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "8173f458-c331-4a86-91b3-057e006dda8a"
+        "projectId": "9a6f4afe-56fc-4304-8a02-2124cfd12266"
       }
     }
   }
